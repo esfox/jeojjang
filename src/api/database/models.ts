@@ -1,0 +1,67 @@
+import { Sequelize, Model, DataTypes, ModelAttributes } from 'sequelize';
+
+class User extends Model {}
+const userAttributes: ModelAttributes =
+{
+  user_id:
+  {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+};
+
+class Media extends Model {}
+const mediaAttributes =
+{
+  link: DataTypes.STRING
+};
+
+class Tag extends Model {}
+const tagAttributes =
+{
+  name: DataTypes.STRING
+};
+
+class UserMedia extends Model {}
+class MediaTag extends Model {}
+
+const models =
+[
+  { model: User, attributes: userAttributes },
+  { model: Media, attributes: mediaAttributes },
+  { model: Tag, attributes: tagAttributes },
+  { model: UserMedia, },
+  { model: MediaTag, },
+];
+
+function initializeModels(sequelize: Sequelize)
+{
+  for(const { model, attributes } of models)
+    model.init(attributes || {},
+    {
+      sequelize,
+      underscored: true,
+    });
+
+  associateModels();
+}
+
+function associateModels()
+{
+  Media.belongsToMany(User, { through: UserMedia, foreignKey: 'user_id' });
+  Tag.belongsToMany(UserMedia, { through: MediaTag, foreignKey: 'tag_id' });
+  UserMedia.belongsTo(User, { as: 'user', foreignKey: 'user_id' });
+  UserMedia.belongsTo(Media, { as: 'media', foreignKey: 'media_id' });
+  UserMedia.belongsToMany(Tag, 
+    { through: MediaTag, foreignKey: 'user_media_id' });
+}
+
+export
+{
+  initializeModels,
+  User, 
+  Media,
+  Tag, 
+  UserMedia,
+  MediaTag
+};
