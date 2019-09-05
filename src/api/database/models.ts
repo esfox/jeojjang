@@ -1,6 +1,10 @@
 import { Sequelize, Model, DataTypes, ModelAttributes } from 'sequelize';
 
-class User extends Model {}
+class User extends Model
+{
+  // TODO: Change to Snowflake type
+  public user_id: string;
+}
 const userAttributes: ModelAttributes =
 {
   user_id:
@@ -10,13 +14,19 @@ const userAttributes: ModelAttributes =
   }
 };
 
-class Media extends Model {}
+class Media extends Model
+{
+  public link: string;
+}
 const mediaAttributes =
 {
   link: DataTypes.STRING
 };
 
-class Tag extends Model {}
+class Tag extends Model
+{
+  public name: string;
+}
 const tagAttributes =
 {
   name: DataTypes.STRING
