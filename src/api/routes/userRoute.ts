@@ -17,9 +17,11 @@ userRouter.get('/:id', async context =>
 userRouter.post('/', async context =>
   await post(context, discordIDProperty, userService.save));
 
+// deleting a user database ID
 userRouter.delete('/:id', async context =>
   await destroy(context, userService.deleteByID));
 
+// deleting a user by Discord ID
 userRouter.delete('/', async context =>
   await destroy(context, userService.deleteByID, discordIDProperty));
 

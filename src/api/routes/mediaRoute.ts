@@ -9,7 +9,7 @@ const linkProperty = 'link';
 mediaRouter.get('/', async context =>
   await get(context, mediaService.getAll, linkProperty, mediaService.findByLink));
 
-// get media by Database ID
+// get media by ID
 mediaRouter.get('/:id', async context =>
   await findByID(context, mediaService.findByID));
 
@@ -17,9 +17,11 @@ mediaRouter.get('/:id', async context =>
 mediaRouter.post('/', async context =>
   await post(context, linkProperty, mediaService.save));
 
+// delete media by ID
 mediaRouter.delete('/:id', async context =>
   await destroy(context, mediaService.deleteByID));
 
+// delete media by link
 mediaRouter.delete('/', async context =>
   await destroy(context, mediaService.deleteByLink, linkProperty));
 

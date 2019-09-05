@@ -30,9 +30,11 @@ tagRouter.post('/', async context =>
   context.body = createdTags;
 });
 
+// delete a tag by ID
 tagRouter.delete('/:id', async context =>
   await destroy(context, tagService.deleteByID));
 
+// delete a tag by tag name
 tagRouter.delete('/', async context =>
   await destroy(context, tagService.deleteByName, nameProperty));
 
