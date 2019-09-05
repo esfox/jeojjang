@@ -1,12 +1,13 @@
 import Router from 'koa-router';
-import { get, findByID, post } from '../functions/middlewares';
 import { userService } from '../services/userService';
+import { get, findByID, post, destroy } from '../functions/middlewares';
 
 const userRouter = new Router({ prefix: '/user' });
+const discordIDProperty = 'discord_id';
 
 // get all users
 userRouter.get('/', async context =>
-  await get(context, userService.getAll, 'discord_id', userService.findByID));
+  await get(context, userService.getAll, discordIDProperty, userService.findByID));
 
 // get a user by database ID
 userRouter.get('/:id', async context =>
@@ -14,6 +15,12 @@ userRouter.get('/:id', async context =>
 
 // creating a new user
 userRouter.post('/', async context =>
-  await post(context, 'discord_id', userService.save));
+  await post(context, discordIDProperty, userService.save));
+
+userRouter.delete('/:id', async context =>
+  await destroy(context, userService.deleteByID));
+
+userRouter.delete('/', async context =>
+  await destroy(context, userService.deleteByID, discordIDProperty));
 
 export { userRouter };

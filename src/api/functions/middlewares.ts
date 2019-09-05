@@ -2,6 +2,7 @@
 
 import { Context } from 'koa';
 
+// get middleware that gets all rows if there's no expected query parameter
 async function get
 (
   context: Context,
@@ -20,6 +21,7 @@ async function get
   context.body = data;
 }
 
+// middleware for finding a row by ID
 async function findByID(context: Context, findFunction: Function)
 {
   const { id } = context.params;
@@ -29,6 +31,8 @@ async function findByID(context: Context, findFunction: Function)
   context.body = data;
 }
 
+/* post middleware for adding data to the database (also checks if existing)
+  - only gets 1 property from the data */
 async function post
 (
   context: Context,
@@ -52,9 +56,29 @@ async function post
   context.body = result;
 }
 
+// middleware for deleting data in the database, either by ID or by a property
+async function destroy
+(
+  context: Context,
+  deleteFunction: Function,
+  property?: string
+)
+{
+  const parameter = property? context.query[property] : context.params.id;
+  if(!parameter)
+    return context.status = 400;
+
+  const deletedCount = await deleteFunction(parameter);
+  if(!deletedCount)
+    return context.status = 404;
+
+  context.status = 200;
+}
+
 export
 {
   get,
   findByID,
   post,
+  destroy,
 };

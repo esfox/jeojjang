@@ -65,6 +65,18 @@ class TagService extends Service
       return existingTags;
     }
   }
+
+  // deleting a tag by ID
+  async deleteByID(id: number)
+  {
+    return Tag.destroy({ where: { id } });
+  }
+
+  // deleting a tag by name
+  async deleteByName(name: string)
+  {
+    return Tag.destroy({ where: { name } });
+  }
 }
 
 const tagService = new TagService(Tag);

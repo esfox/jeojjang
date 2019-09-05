@@ -1,12 +1,13 @@
 import Router from 'koa-router';
-import { get, findByID, post } from '../functions/middlewares';
 import { tagService } from '../services/tagService';
+import { get, findByID, post, destroy } from '../functions/middlewares';
 
 const tagRouter = new Router({ prefix: '/tag' });
+const nameProperty = 'name';
 
 // get all tags or one by name
 tagRouter.get('/', async context =>
-  await get(context, tagService.getAll, 'name', tagService.findByName));
+  await get(context, tagService.getAll, nameProperty, tagService.findByName));
 
 // get a tag by Database ID
 tagRouter.get('/:id', async context =>
@@ -17,7 +18,7 @@ tagRouter.post('/', async context =>
 {
   const { tags } = context.request.body;
   if(!tags)
-    return await post(context, 'name', tagService.save);
+    return await post(context, nameProperty, tagService.save);
 
   if(!Array.isArray(tags) || tags.length === 0)
     return context.status = 400;
@@ -28,5 +29,11 @@ tagRouter.post('/', async context =>
 
   context.body = createdTags;
 });
+
+tagRouter.delete('/:id', async context =>
+  await destroy(context, tagService.deleteByID));
+
+tagRouter.delete('/', async context =>
+  await destroy(context, tagService.deleteByName, nameProperty));
 
 export { tagRouter };

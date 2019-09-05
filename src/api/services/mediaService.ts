@@ -27,6 +27,18 @@ class MediaService extends Service
   {
     return Media.findOrCreate({ where: { link } });
   }
+
+  // delete media by ID
+  deleteByID(id: number)
+  {
+    return Media.destroy({ where: { id } });
+  }
+
+  // delete by link
+  deleteByLink(link: string)
+  {
+    return Media.destroy({ where: { link } });
+  }
 }
 
 const mediaService = new MediaService(Media);

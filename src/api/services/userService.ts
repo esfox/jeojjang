@@ -14,7 +14,7 @@ class UserService extends Service
   }
 
   // creating a user by Discord or database ID
-  save(id: string)
+  save(id: number | string)
   {
     return User.findOrCreate(
     {
@@ -24,9 +24,18 @@ class UserService extends Service
   }
 
   // finds a user by Discord or database ID and creates it if it doesn't exist
-  findOrSave(id: string)
+  findOrSave(id: number | string)
   {
     return this.save(id);
+  }
+
+  // deletes a user by Discord or database ID
+  deleteByID(id: number | string)
+  {
+    return User.destroy(
+    {
+      where: whereIDorUserID(id)
+    });
   }
 }
 
