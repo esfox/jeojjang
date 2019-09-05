@@ -1,19 +1,9 @@
 import { Op } from 'sequelize';
+import { Service } from './service';
 import { Media } from '../database/models';
 
-class MediaService
+class MediaService extends Service
 {
-  getAll()
-  {
-    return Media.findAll();
-  }
-
-  // finds media by ID only
-  findByID(id: number)
-  {
-    return Media.findOne({ where: { id } });
-  }
-
   // finds media by link only
   findByLink(link: string)
   {
@@ -39,5 +29,5 @@ class MediaService
   }
 }
 
-const mediaService = new MediaService();
+const mediaService = new MediaService(Media);
 export { mediaService };

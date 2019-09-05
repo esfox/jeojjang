@@ -1,18 +1,14 @@
 import { Op } from 'sequelize';
+import { Service } from './service';
 import { User } from '../database/models';
 
-const whereIDorUserID = (id: string) =>
+const whereIDorUserID = (id: number | string) =>
   ({ [Op.or]: [ { id }, { user_id: id } ] });
 
-class UserService
+class UserService extends Service
 {
-  getAll()
-  {
-    return User.findAll();
-  }
-
   // finds a user by Discord or database ID
-  findByUserID(id: string)
+  findByID = (id: number | string) =>
   {
     return User.findOne({ where: whereIDorUserID(id) });
   }
@@ -30,9 +26,9 @@ class UserService
   // finds a user by Discord or database ID and creates it if it doesn't exist
   findOrSave(id: string)
   {
-    this.save(id);
+    return this.save(id);
   }
 }
 
-const userService = new UserService();
+const userService = new UserService(User);
 export { userService };
