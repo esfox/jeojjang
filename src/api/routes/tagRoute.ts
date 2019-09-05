@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import { tagService } from '../services/tagService';
-import { get, findByID, post, destroy } from '../functions/middlewares';
+import { get, find, post, destroy } from '../functions/middlewares';
 
 const tagRouter = new Router({ prefix: '/tag' });
 const nameProperty = 'name';
@@ -11,7 +11,7 @@ tagRouter.get('/', async context =>
 
 // get a tag by Database ID
 tagRouter.get('/:id', async context =>
-  await findByID(context, tagService.findByID));
+  await find(context, tagService.findByID));
 
 // creating new tags
 tagRouter.post('/', async context =>

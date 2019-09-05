@@ -22,7 +22,7 @@ async function get
 }
 
 // middleware for finding a row by ID
-async function findByID(context: Context, findFunction: Function)
+async function find(context: Context, findFunction: Function)
 {
   const { id } = context.params;
   const data = await findFunction(id);
@@ -78,7 +78,7 @@ async function destroy
 export
 {
   get,
-  findByID,
+  find,
   post,
   destroy,
 };

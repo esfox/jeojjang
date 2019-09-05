@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import { mediaService } from '../services/mediaService';
-import { get, findByID, post, destroy } from '../functions/middlewares';
+import { get, find, post, destroy } from '../functions/middlewares';
 
 const mediaRouter = new Router({ prefix: '/media' });
 const linkProperty = 'link';
@@ -11,7 +11,7 @@ mediaRouter.get('/', async context =>
 
 // get media by ID
 mediaRouter.get('/:id', async context =>
-  await findByID(context, mediaService.findByID));
+  await find(context, mediaService.findByID));
 
 // creating new media
 mediaRouter.post('/', async context =>
