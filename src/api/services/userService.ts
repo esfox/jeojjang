@@ -11,13 +11,13 @@ class UserService
     return User.findAll();
   }
 
-  // finds a user by Discord ID or database ID
+  // finds a user by Discord or database ID
   findByUserID(id: string)
   {
     return User.findOne({ where: whereIDorUserID(id) });
   }
 
-  // creating a user by Discord ID or database ID
+  // creating a user by Discord or database ID
   save(id: string)
   {
     return User.findOrCreate(
@@ -27,7 +27,7 @@ class UserService
     });
   }
 
-  // finds a user by Discord ID or database ID and created if it doesn't exist
+  // finds a user by Discord or database ID and creates it if it doesn't exist
   findOrSave(id: string)
   {
     this.save(id);
