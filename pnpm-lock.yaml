@@ -5,7 +5,6 @@ dependencies:
   koa-router: 7.4.0
   sequelize: 5.18.1
   sqlite3: 4.1.0
-  valid-url: 1.0.9
 devDependencies:
   '@types/koa': 2.0.49
   '@types/koa-bodyparser': 4.3.0
@@ -1310,10 +1309,6 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-pW0No1RGHgzlpHJO1nsVrHKpOEIxkGg1xB+v0ZmdNH5OAeAwzAVrCnI2/6Mtx+Uys6iaylxa+D3g4j63IKKjSQ==
-  /valid-url/1.0.9:
-    dev: false
-    resolution:
-      integrity: sha1-HBRHm0DxOXp1eC8RXkCGRHQzogA=
   /validator/10.11.0:
     dev: false
     engines:
@@ -1380,4 +1375,3 @@ specifiers:
   sqlite3: ^4.1.0
   ts-node: ^8.3.0
   typescript: ^3.6.2
-  valid-url: ^1.0.9
