@@ -21,5 +21,8 @@ dist
 *.log
 logs
 
+# sqlite databases
+*.sqlite
+
 # Unnecessary others folder
 others
