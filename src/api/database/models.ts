@@ -3,15 +3,11 @@ import { Sequelize, Model, DataTypes, ModelAttributes } from 'sequelize';
 class User extends Model
 {
   // TODO: Change to Snowflake type
-  public user_id: string;
+  public discord_id: string;
 }
 const userAttributes: ModelAttributes =
 {
-  user_id:
-  {
-    type: DataTypes.STRING,
-    allowNull: false
-  }
+  discord_id: DataTypes.STRING
 };
 
 class Media extends Model
@@ -58,9 +54,9 @@ function initializeModels(sequelize: Sequelize)
 
 function associateModels()
 {
-  Media.belongsToMany(User, { through: UserMedia, foreignKey: 'user_id' });
+  Media.belongsToMany(User, { through: UserMedia, foreignKey: 'discord_id' });
   Tag.belongsToMany(UserMedia, { through: MediaTag, foreignKey: 'tag_id' });
-  UserMedia.belongsTo(User, { as: 'user', foreignKey: 'user_id' });
+  UserMedia.belongsTo(User, { as: 'user', foreignKey: 'discord_id' });
   UserMedia.belongsTo(Media, { as: 'media', foreignKey: 'media_id' });
   UserMedia.belongsToMany(Tag, 
     { through: MediaTag, foreignKey: 'user_media_id' });
