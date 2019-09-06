@@ -10,9 +10,9 @@ server
   .use(apiRouter.routes())
   .use(apiRouter.allowedMethods());
 
-function startServer()
+async function startServer()
 {
-  syncDatabase();
+  await syncDatabase();
   server.listen(port);
   console.log(`Server started on port ${port}.`);
 }
