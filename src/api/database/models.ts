@@ -54,9 +54,9 @@ function initializeModels(sequelize: Sequelize)
 
 function associateModels()
 {
-  Media.belongsToMany(User, { through: UserMedia, foreignKey: 'discord_id' });
+  Media.belongsToMany(User, { through: UserMedia, foreignKey: 'user_id' });
   Tag.belongsToMany(UserMedia, { through: MediaTag, foreignKey: 'tag_id' });
-  UserMedia.belongsTo(User, { as: 'user', foreignKey: 'discord_id' });
+  UserMedia.belongsTo(User, { as: 'user', foreignKey: 'user_id' });
   UserMedia.belongsTo(Media, { as: 'media', foreignKey: 'media_id' });
   UserMedia.belongsToMany(Tag, 
     { through: MediaTag, foreignKey: 'user_media_id' });
