@@ -32,7 +32,7 @@ async function find(context: Context, findFunction: Function)
 }
 
 /* post middleware for adding data to the database (also checks if existing)
-  - only gets 1 property from the data */
+  - only gets 1 property from the request body */
 async function post
 (
   context: Context,
@@ -54,6 +54,34 @@ async function post
     return context.status = 409;
 
   context.body = result;
+}
+
+// middleware for editing data in the database
+async function edit
+(
+  context: Context,
+  property: string,
+  editFunction: Function,
+  validateFunction?: Function
+)
+{
+  const { id } = context.params;
+  if(!id)
+    return context.status = 400;
+
+  const data = context.request.body[property];
+  if(!data)
+    return context.status = 400;
+
+  if(validateFunction)
+    if(!validateFunction())
+      return context.status = 400;
+
+  const [ editedCount ] = await editFunction(id, property, data);
+  if(!editedCount)
+    return context.status = 404;
+    
+  context.status = 200;
 }
 
 // middleware for deleting data in the database, either by ID or by a property
@@ -80,5 +108,6 @@ export
   get,
   find,
   post,
+  edit,
   destroy,
 };

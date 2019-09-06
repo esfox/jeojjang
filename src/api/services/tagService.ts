@@ -10,23 +10,23 @@ class TagService extends Service
     return Tag.findOne({ where: { name } });
   }
 
-  // save a tag (single)
-  save = (name: string) =>
+  // saves a tag (single)
+  save(name: string)
   {
-    return this.findOrSave(name);
+    name = name.trim().toLowerCase();
+    return Tag.findOrCreate({ where: { name } });
   }
 
-  // save tags (mutliple)
-  saveMany = (tags: string[]) =>
+  // saves tags (mutliple)
+  saveMany(tags: string[])
   {
     return this.findOrSaveMany(tags, false);
   }
 
   // finds a tag by name and creates it if it doesn't exist
-  async findOrSave(name: string)
+  findOrSave = (name: string) =>
   {
-    name = name.trim().toLowerCase();
-    return Tag.findOrCreate({ where: { name } });
+    return this.save(name);
   }
 
   /* Gets all tags in the database by tag names,
@@ -66,14 +66,8 @@ class TagService extends Service
     }
   }
 
-  // deleting a tag by ID
-  async deleteByID(id: number)
-  {
-    return Tag.destroy({ where: { id } });
-  }
-
-  // deleting a tag by name
-  async deleteByName(name: string)
+  // deletes a tag by name
+  deleteByName(name: string)
   {
     return Tag.destroy({ where: { name } });
   }

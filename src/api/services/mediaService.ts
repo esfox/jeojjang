@@ -22,19 +22,13 @@ class MediaService extends Service
     });
   }
 
-  // creating or getting a media
+  // creates or gets media
   save(link: string)
   {
     return Media.findOrCreate({ where: { link } });
   }
 
-  // delete media by ID
-  deleteByID(id: number)
-  {
-    return Media.destroy({ where: { id } });
-  }
-
-  // delete by link
+  // deletes by link
   deleteByLink(link: string)
   {
     return Media.destroy({ where: { link } });

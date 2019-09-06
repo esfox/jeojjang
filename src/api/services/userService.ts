@@ -3,39 +3,36 @@ import { Service } from './service';
 import { User } from '../database/models';
 
 const whereIDorUserID = (id: number | string) =>
-  ({ [Op.or]: [ { id }, { user_id: id } ] });
+  ({ [Op.or]: [ { id }, { discord_id: id } ] });
 
 class UserService extends Service
 {
   // finds a user by Discord or database ID
-  findByID = (id: number | string) =>
+  find = (id: number | string) =>
   {
     return User.findOne({ where: whereIDorUserID(id) });
   }
-
-  // creating a user by Discord or database ID
+ 
+  // saves a user
   save(id: number | string)
   {
     return User.findOrCreate(
     {
       where: whereIDorUserID(id),
-      defaults: { user_id: id }
+      defaults: { discord_id: id }
     });
   }
 
   // finds a user by Discord or database ID and creates it if it doesn't exist
-  findOrSave(id: number | string)
+  findOrSave = (id: number | string) =>
   {
     return this.save(id);
   }
 
   // deletes a user by Discord or database ID
-  deleteByID(id: number | string)
+  delete = (id: number | string) =>
   {
-    return User.destroy(
-    {
-      where: whereIDorUserID(id)
-    });
+    return User.destroy({ where: whereIDorUserID(id) });
   }
 }
 

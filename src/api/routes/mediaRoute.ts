@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import { mediaService } from '../services/mediaService';
-import { get, find, post, destroy } from '../functions/middlewares';
+import { get, find, post, edit, destroy } from '../functions/middlewares';
 
 const mediaRouter = new Router({ prefix: '/media' });
 const linkProperty = 'link';
@@ -11,15 +11,19 @@ mediaRouter.get('/', async context =>
 
 // get media by ID
 mediaRouter.get('/:id', async context =>
-  await find(context, mediaService.findByID));
+  await find(context, mediaService.find));
 
 // creating new media
 mediaRouter.post('/', async context =>
   await post(context, linkProperty, mediaService.save));
 
+// editing media by database ID
+mediaRouter.patch('/:id', async context =>
+  await edit(context, linkProperty, mediaService.edit));
+
 // delete media by ID
 mediaRouter.delete('/:id', async context =>
-  await destroy(context, mediaService.deleteByID));
+  await destroy(context, mediaService.delete));
 
 // delete media by link
 mediaRouter.delete('/', async context =>
