@@ -11,9 +11,13 @@ class Service
     this.model = model;
   }
 
-  getAll = () =>
+  getAll = (limit: number = 5, page: number = 1) =>
   {
-    return this.model.findAll();
+    return this.model.findAll(
+    {
+      limit: limit,
+      offset: limit * (page - 1)
+    });
   }
 
   find = (id: number) =>
