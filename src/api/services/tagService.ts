@@ -17,12 +17,6 @@ class TagService extends Service
     return Tag.findOrCreate({ where: { name } });
   }
 
-  // saves tags (mutliple)
-  saveMany(tags: string[])
-  {
-    return this.findOrSaveMany(tags, false);
-  }
-
   // finds a tag by name and creates it if it doesn't exist
   findOrSave = (name: string) =>
   {
@@ -33,37 +27,51 @@ class TagService extends Service
     and adds those that don't exist.
     If `get` is true, all the given tags will be returned.
     (non-existing ones will be added to the database first) */
-  async findOrSaveMany(tags: string[], get?: boolean)
+  private async saveManyWithArgs(tags: string[], getAll?: boolean)
   {
-    // making sure all tags are normalized
-    tags = tags.map(tag => tag.trim().toLowerCase());
+     // making sure all tags are normalized
+     tags = tags.map(tag => tag.trim().toLowerCase());
 
-    // get all the existing tags to remove from the given tags (`data`)
-    const existingTags: Tag[] = await Tag.findAll(
-    {
-      where: { name: { [Op.in]: tags } }
-    });
+     // get all the existing tags to remove from the given tags (`data`)
+     const existingTags: Tag[] = await Tag.findAll(
+     {
+       where: { name: { [Op.in]: tags } }
+     });
+ 
+     /* map to the tag names because given tags is a string array
+       then remove the existing tags from it (to be added to the database) */ 
+     const existingTagNames = existingTags.map(({ name }) => name);
+     const notExistingTags = tags
+       .filter(name => !existingTagNames.includes(name))
+       .map(name => ({ name }));
+ 
+     // add the non-existing tags to the database
+     if(notExistingTags.length > 0)
+     {
+       const createdTags = await Tag.bulkCreate(notExistingTags);
+ 
+       // if `get` is false, no need to return all the given tags
+       if(!getAll)
+         return createdTags;
+ 
+       // re-add the created tags to the given tags then return
+       existingTags.push(...createdTags);
+       return existingTags;
+     }
 
-    /* map to the tag names because given tags is a string array
-      then remove the existing tags from it (to be added to the database) */ 
-    const existingTagNames = existingTags.map(({ name }) => name);
-    const notExistingTags = tags
-      .filter(name => !existingTagNames.includes(name))
-      .map(name => ({ name }));
-
-    // add the non-existing tags to the database
-    if(notExistingTags.length > 0)
-    {
-      const createdTags = await Tag.bulkCreate(notExistingTags);
-
-      // if `get` is false, no need to return all the given tags
-      if(!get)
-        return createdTags;
-
-      // re-add the created tags to the given tags then return
-      existingTags.push(...createdTags);
+     if(getAll)
       return existingTags;
-    }
+  }
+
+  // saves tags (mutliple)
+  saveMany = (tags: string[]) =>
+  {
+    return this.saveManyWithArgs(tags);
+  }
+
+  findOrSaveMany = (tags: string[]) =>
+  {
+    return this.saveManyWithArgs(tags, true);
   }
 
   // deletes a tag by name
