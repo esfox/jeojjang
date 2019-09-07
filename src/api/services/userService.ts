@@ -13,7 +13,7 @@ class UserService extends Service
     return User.findOne({ where: whereIDorUserID(id) });
   }
  
-  // saves a user
+  // saves a user, but finds it first to avoid duplicates
   save(id: number | string)
   {
     return User.findOrCreate(
