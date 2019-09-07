@@ -25,10 +25,17 @@ class MediaService extends Service
   }
 
   // handles both getAllFromUser and findWithTags
-  private findWithArgs(user_id?: number | string, tags?: string[])
+  private findWithArgs(
+    user_id?: number | string,
+    tags?: string[],
+    limit: number = 10,
+    page: number = 1
+  )
   {
     return UserMedia.findAll(
     {
+      limit: limit,
+      offset: limit * (page - 1),
       include:
       [
         {
@@ -62,22 +69,36 @@ class MediaService extends Service
         userMedia);
   }
 
-  // finds all media by tags from a user (if ID is given)
-  findWithTags = (tags: string[], user_id?: number | string) =>
+  /* finds all media by tags from a user if the `user_id`
+    (database or Discord ID) is given */
+  findWithTags = (
+    tags: string[],
+    user_id?: number | string,
+    limit?: number,
+    page?: number
+  ) =>
   {
-    return this.findWithArgs(user_id, tags);
+    return this.findWithArgs(user_id, tags, limit, page);
   }
 
-  // get all media of a user by database or Discord ID with tags (if given)
-  findFromUser = (user_id: number | string, tags?: string[]) =>
+  // get all media of a user by database or Discord ID
+  findFromUser = (
+    user_id: number | string,
+    limit?: number,
+    page?: number
+  ) =>
   {
-    return this.findWithArgs(user_id, tags);
+    return this.findWithArgs(user_id, null, limit, page);
   }
 
   // get all media of a user by Discord ID
-  findFromDiscordUser(discord_id: string)
+  findFromDiscordUser = (
+    discord_id: string,
+    limit?: number,
+    page?: number
+  ) =>
   {
-    return this.findFromUser(discord_id);
+    return this.findFromUser(discord_id, limit, page);
   }
 
   // saves media, but finds it first to avoid duplicates
@@ -87,7 +108,11 @@ class MediaService extends Service
   }
   
   // saves a media for a user by database ID or Discord ID
-  saveForUser = async (link: string, user_id: number | string, tags: string[]) =>
+  saveForUser = async (
+    link: string,
+    user_id: number | string,
+    tags: string[]
+  ) =>
   {
     let [ user ] = await userService.findOrSave(user_id);
     const [ media ] = await this.save(link);
