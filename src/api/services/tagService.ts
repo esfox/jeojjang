@@ -1,6 +1,7 @@
-import { Op } from 'sequelize';
+import { Sequelize, Op } from 'sequelize';
 import { Service } from './service';
-import { Tag } from '../database/models';
+import { Tag, UserMedia, User } from '../database/models';
+import { userService } from './userService';
 
 class TagService extends Service
 {
@@ -8,6 +9,26 @@ class TagService extends Service
   findByName(name: string)
   {
     return Tag.findOne({ where: { name } });
+  }
+
+  // find tags used by a user by either Discord or database ID
+  async findUsedByUser(user_id: number | string)
+  {
+    // if the given `user_id` is a string it's a Discord ID
+    if(typeof user_id === 'string')
+      user_id = await userService.findIDFromDiscordID(user_id);
+
+    return Tag.findAll(
+    {
+      include:
+      [
+        {
+          model: UserMedia,
+          as: 'userMedia',
+          where: { user_id }
+        }
+      ]
+    });
   }
 
   // saves a tag (single)
