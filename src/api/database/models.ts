@@ -2,6 +2,7 @@ import { Sequelize, Model, DataTypes, ModelAttributes } from 'sequelize';
 
 class User extends Model
 {
+  public id: number;
   // TODO: Change to Snowflake type
   public discord_id: string;
 }
@@ -12,6 +13,7 @@ const userAttributes: ModelAttributes =
 
 class Media extends Model
 {
+  public id: number;
   public link: string;
 }
 const mediaAttributes =
@@ -21,6 +23,7 @@ const mediaAttributes =
 
 class Tag extends Model
 {
+  public id: number;
   public name: string;
 }
 const tagAttributes =
@@ -30,6 +33,7 @@ const tagAttributes =
 
 class UserMedia extends Model
 {
+  public id: number;
   public user?: User;
   public media?: Media;
   public tags?: Tag[];
@@ -78,7 +82,7 @@ function associateModels()
   UserMedia.belongsTo(Media, { foreignKey: 'media_id', as: 'media' });
 
   Tag.belongsToMany(UserMedia,
-    { through: MediaTag, foreignKey: 'tag_id' });
+    { through: MediaTag, foreignKey: 'tag_id', as: 'userMedia' });
   UserMedia.belongsToMany(Tag, 
     { through: MediaTag, foreignKey: 'user_media_id', as: 'tags' });
 }
