@@ -12,6 +12,17 @@ class UserService extends Service
   {
     return User.findOne({ where: whereIDorUserID(id) });
   }
+
+  // finds the database ID from a given Discord ID
+  findIDFromDiscordID(discord_id: string)
+  {
+    return User.findOne(
+    {
+      where: { discord_id },
+      attributes: [ 'id' ]
+    })
+      .then((user: User) => user? user.id : null);
+  }
  
   // saves a user, but finds it first to avoid duplicates
   save(id: number | string)
