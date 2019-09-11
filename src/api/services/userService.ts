@@ -2,7 +2,7 @@ import { Op } from 'sequelize';
 import { Service } from './service';
 import { User } from '../database/models';
 
-const whereIDorUserID = (id: number | string) =>
+const whereIDorDiscordID = (id: number | string) =>
   ({ [Op.or]: [ { id }, { discord_id: id } ] });
 
 class UserService extends Service
@@ -10,7 +10,7 @@ class UserService extends Service
   // finds a user by Discord or database ID
   find = (id: number | string) =>
   {
-    return User.findOne({ where: whereIDorUserID(id) });
+    return User.findOne({ where: whereIDorDiscordID(id) });
   }
 
   // finds the database ID from a given Discord ID
@@ -29,7 +29,7 @@ class UserService extends Service
   {
     return User.findOrCreate(
     {
-      where: whereIDorUserID(id),
+      where: whereIDorDiscordID(id),
       defaults: { discord_id: id }
     });
   }
@@ -43,7 +43,7 @@ class UserService extends Service
   // deletes a user by Discord or database ID
   delete = (id: number | string) =>
   {
-    return User.destroy({ where: whereIDorUserID(id) });
+    return User.destroy({ where: whereIDorDiscordID(id) });
   }
 }
 
