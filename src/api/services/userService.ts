@@ -48,4 +48,4 @@ class UserService extends Service
 }
 
 const userService = new UserService(User);
-export { userService };
+export { userService, whereIDorDiscordID };

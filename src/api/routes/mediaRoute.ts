@@ -27,6 +27,6 @@ mediaRouter.delete('/:id', async context =>
 
 // delete media by link
 mediaRouter.delete('/', async context =>
-  await destroy(context, mediaService.deleteByLink, linkProperty));
+  await destroy(context, mediaService.delete, linkProperty));
 
 export { mediaRouter };

@@ -1,4 +1,4 @@
-import { Sequelize, Op } from 'sequelize';
+import { Op } from 'sequelize';
 import { Service } from './service';
 import { Tag, UserMedia, User } from '../database/models';
 import { userService } from './userService';
@@ -12,14 +12,21 @@ class TagService extends Service
   }
 
   // find tags used by a user by either Discord or database ID
-  async findUsedByUser(user_id: number | string)
+  async findUsedByUser(
+    user_id: number | string,
+    limit: number = 10,
+    page: number = 1
+  )
   {
-    // if the given `user_id` is a string it's a Discord ID
+    /* if the given `user_id` is a string it's a Discord ID,
+      so get the database ID from the Discord ID */
     if(typeof user_id === 'string')
       user_id = await userService.findIDFromDiscordID(user_id);
 
     return Tag.findAll(
     {
+      limit: limit,
+      offset: limit * (page - 1),
       include:
       [
         {
