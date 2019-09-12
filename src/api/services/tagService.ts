@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 import { Service } from './service';
-import { Tag, UserMedia, User } from '../database/models';
+import { Tag, UserMedia, User, MediaTag } from '../database/models';
 import { userService } from './userService';
 
 class TagService extends Service
@@ -106,6 +106,17 @@ class TagService extends Service
   deleteByName(name: string)
   {
     return Tag.destroy({ where: { name } });
+  }
+
+  // deletes all tags that aren't used by any media
+  async deleteUnused(tags: Tag[])
+  {
+    for(const tag of tags)
+    {
+      const useCount = await MediaTag.count({ where: { tag_id: tag.id } });
+      if(useCount === 0)
+        await tag.destroy();
+    }
   }
 }
 

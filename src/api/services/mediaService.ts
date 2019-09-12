@@ -162,6 +162,29 @@ class MediaService extends Service
     return Media.destroy({ where: whereLinkOrID(linkOrID) });
   }
 
+  /* deletes a media from a user using the media's link or ID
+    and the user's Discord or database ID */
+  deleteFromUser = async (linkOrID: number | string, userID: string | number) =>
+  {
+    const userMedia = await this.findByLinkOrIDFromUser(linkOrID, userID);
+    const result = await userMedia.destroy();
+
+    // deletes media that aren't used by any user
+    await this.deleteUnused(userMedia.media_id);
+
+    // deletes tags that aren't used by any media
+    await tagService.deleteUnused(userMedia.tags);
+
+    return result;
+  }
+
+  // deletes media not used saved by any user using the media's ID only
+  async deleteUnused(id: number)
+  {
+    const useCount = await UserMedia.count({ where: { media_id: id } });
+    return useCount === 0? Media.destroy({ where: { id } }) : null;
+  }
+
   /* finds user media by link or ID and the user's Discord or database ID
     then adds, edits or deletes the tags of the user media */
   private async modifyUserMediaTags(
@@ -175,17 +198,22 @@ class MediaService extends Service
     if(!userMedia)
       return;
 
-    if(Array.isArray(tags))
-      tags = await tagService.findOrSaveMany(tags);
-    else 
-      [ tags ] = await tagService.findOrSave(tags);
+    // get tag instances from given tag names
+    const tagObjects: Tag[] = await (Array.isArray(tags)?
+      tagService.findOrSaveMany(tags) :
+      tagService.findOrSave(tags).then(([ tag ]) => [ tag ]));
 
     if(mediaTagUpdate === MediaTagUpdate.Add)
-      await userMedia.addTags(tags);
+      await userMedia.addTags(tagObjects);
     else if (mediaTagUpdate === MediaTagUpdate.Edit)
-      await userMedia.setTags(tags);
+      await userMedia.setTags(tagObjects);
     else if(mediaTagUpdate === MediaTagUpdate.Delete)
-      await userMedia.removeTags(tags);
+      await userMedia.removeTags(tagObjects);
+
+    // deletes tags that aren't used by any media
+    if(mediaTagUpdate === MediaTagUpdate.Edit ||
+      mediaTagUpdate === MediaTagUpdate.Delete)
+      await tagService.deleteUnused(tagObjects);
 
     return userMedia;
   }
@@ -212,6 +240,7 @@ class MediaService extends Service
       linkOrID, userID, tags, MediaTagUpdate.Edit);
   }
 
+  // deletes tags of a user media
   deleteUserMediaTags = async (
     linkOrID: string | number,
     userID: string | number,

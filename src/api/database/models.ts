@@ -34,6 +34,8 @@ const tagAttributes =
 class UserMedia extends Model
 {
   public id: number;
+  public media_id: number;
+  public user_id: number;
   public user?: User;
   public media?: Media;
   public tags?: Tag[];
