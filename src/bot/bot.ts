@@ -1,20 +1,26 @@
-// import * as Discord from 'discord.js';
+import * as Discord from 'discord.js';
+import { Context } from 'discord-utils';
 
-// const bot = new Discord.Client();
-// bot.on('ready', () =>
-// {
-//   console.log('Bot is online.');
-// });
+const bot = new Discord.Client();
+const context = new Context(bot);
+context.setModulesPath(`${__dirname}/modules`);
 
-// bot.on('message', message =>
-// {
-//   if(message.content === ';test')
-//     message.channel.send('Bot is online.');
-// });
+const config = require('./config');
+context.setConfig(config);
 
-// function startBot()
-// {
-//   bot.login('NTUwMzYyNDY1OTA1NTQxMTMy.XTva4g.WZQilg6k_KjznrBaAjSBkDKCm0s');
-// }
+bot.on('ready', () =>
+{
+  console.log('Bot is online.');
+});
 
-// export { startBot };
+bot.on('message', message =>
+{
+  context.from(message);
+});
+
+function startBot()
+{
+  bot.login(process.env.DISCORD_BOT_TOKEN);
+}
+
+export { startBot };

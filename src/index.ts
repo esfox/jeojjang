@@ -1,5 +1,11 @@
-import { startServer } from './api/server';
-startServer();
+import * as dotenv from 'dotenv';
+dotenv.config({ path: `${__dirname}/../.env` });
 
-// import { startBot } from './bot/bot';
-// startBot();
+import { startServer } from './api/server';
+import { startBot } from './bot/bot';
+
+(async function()
+{
+  await startServer();
+  startBot();
+})();
