@@ -135,14 +135,17 @@ class MediaService extends Service
     tags: string | string[]
   ) =>
   {
+    // finds the user to add the media to and creates if it doesn't exist
     let [ user ] = await userService.findOrSave(userID);
     const [ media ] = await this.save(link);
 
+    // finds the tags for the media and creates if not existing
     if(Array.isArray(tags))
       tags = await tagService.findOrSaveMany(tags);
     else
       [ tags ] = await tagService.findOrSave(tags);
 
+    // saves the media for the user
     const [ userMedia ] = await UserMedia.findOrCreate(
     {
       where:
