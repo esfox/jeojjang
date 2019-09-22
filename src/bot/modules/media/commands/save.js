@@ -24,7 +24,8 @@ module.exports = class extends Command
   }
 }
 
-const mediaTypes = [ 'image', 'video' ];
+const mediaTypes = [ 'image', 'video', 'gifv' ];
+const allowedLinksRegex = /gfycat.com|youtube.com|youtu.be/g;
 
 /** @param {import('discord-utils').Context} context*/
 async function action(context)
@@ -59,15 +60,13 @@ async function action(context)
   if(embed)
   {
     const { type, image, video } = embed;
-    if(![ 'image', 'gifv', 'video' ].includes(type) && !video && !image)
+    if(!mediaTypes.includes(type) && !video && !image)
       return context.send('❌  The link is not a valid media type.');
   }
-  else
+
+  if(!link.match(allowedLinksRegex))
   {
-    const { headers } = await fetch(link,
-    {
-      method: 'head'
-    });
+    const { headers } = await fetch(link, { method: 'head' });
     if(!mediaTypes.includes(headers.get('content-type').split('/').shift()))
       return context.send('❌  The link is not a valid media type.');
   }
