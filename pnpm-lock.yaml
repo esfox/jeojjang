@@ -1,18 +1,21 @@
 dependencies:
-  '@types/koa-router': 7.0.42
-  discord-utils: github.com/esfox/discord-utils/c62dc5b29952db7afea03b4b63ed921a51264f1d
+  discord-utils: github.com/esfox/discord-utils/f7919eda557679f8c46c4e0a24c33d0ab185ed2e
   discord.js: 11.5.1
   dotenv: 8.1.0
   koa: 2.8.1
   koa-bodyparser: 4.2.1
   koa-router: 7.4.0
+  node-fetch: 2.6.0
   sequelize: 5.18.1
   sqlite3: 4.1.0
+  valid-url: 1.0.9
 devDependencies:
   '@types/dotenv': 6.1.1
   '@types/koa': 2.0.49
   '@types/koa-bodyparser': 4.3.0
+  '@types/koa-router': 7.0.42
   '@types/node': 12.7.4
+  '@types/node-fetch': 2.5.0
   ts-node: 8.3.0_typescript@3.6.2
   typescript: 3.6.2
 lockfileVersion: 5.1
@@ -20,17 +23,20 @@ packages:
   /@types/accepts/1.3.5:
     dependencies:
       '@types/node': 12.7.4
+    dev: true
     resolution:
       integrity: sha512-jOdnI/3qTpHABjM5cx1Hc0sKsPoYCp+DP/GJRGtDlPd7fiV9oXGGIcjW/ZOxLIvjGz8MA+uMZI9metHlgqbgwQ==
   /@types/body-parser/1.17.1:
     dependencies:
       '@types/connect': 3.4.32
       '@types/node': 12.7.4
+    dev: true
     resolution:
       integrity: sha512-RoX2EZjMiFMjZh9lmYrwgoP9RTpAjSHiJxdp4oidAQVO02T7HER3xj9UKue5534ULWeqVEkujhWcyvUce+d68w==
   /@types/connect/3.4.32:
     dependencies:
       '@types/node': 12.7.4
+    dev: true
     resolution:
       integrity: sha512-4r8qa0quOvh7lGD0pre62CAb1oni1OO6ecJLGCezTmhQ8Fz50Arx9RUszryR8KlgK6avuSXvviL6yWyViQABOg==
   /@types/cookies/0.7.2:
@@ -39,6 +45,7 @@ packages:
       '@types/express': 4.17.1
       '@types/keygrip': 1.0.1
       '@types/node': 12.7.4
+    dev: true
     resolution:
       integrity: sha512-jnihWgshWystcJKrz8C9hV+Ot9lqOUyAh2RF+o3BEo6K6AS2l4zYCb9GYaBuZ3C6Il59uIGqpE3HvCun4KKeJA==
   /@types/dotenv/6.1.1:
@@ -51,6 +58,7 @@ packages:
     dependencies:
       '@types/node': 12.7.4
       '@types/range-parser': 1.2.3
+    dev: true
     resolution:
       integrity: sha512-GqpaVWR0DM8FnRUJYKlWgyARoBUAVfRIeVDZQKOttLFp5SmhhF9YFIYeTPwMd/AXfxlP7xVO2dj1fGu0Q+krKQ==
   /@types/express/4.17.1:
@@ -58,12 +66,15 @@ packages:
       '@types/body-parser': 1.17.1
       '@types/express-serve-static-core': 4.16.9
       '@types/serve-static': 1.13.3
+    dev: true
     resolution:
       integrity: sha512-VfH/XCP0QbQk5B5puLqTLEeFgR8lfCJHZJKkInZ9mkYd+u8byX0kztXEQxEk4wZXJs8HI+7km2ALXjn4YKcX9w==
   /@types/http-assert/1.5.1:
+    dev: true
     resolution:
       integrity: sha512-PGAK759pxyfXE78NbKxyfRcWYA/KwW17X290cNev/qAsn9eQIxkH4shoNBafH37wewhDG/0p1cHPbK6+SzZjWQ==
   /@types/keygrip/1.0.1:
+    dev: true
     resolution:
       integrity: sha1-/1QEYtL7TQqIRBzq8n0oewHD2Hg=
   /@types/koa-bodyparser/4.3.0:
@@ -75,12 +86,13 @@ packages:
   /@types/koa-compose/3.2.4:
     dependencies:
       '@types/koa': 2.0.49
+    dev: true
     resolution:
       integrity: sha512-ioou0rxkuWL+yBQYsHUQAzRTfVxAg8Y2VfMftU+Y3RA03/MzuFL0x/M2sXXj3PkfnENbHsjeHR1aMdezLYpTeA==
   /@types/koa-router/7.0.42:
     dependencies:
       '@types/koa': 2.0.49
-    dev: false
+    dev: true
     resolution:
       integrity: sha512-mggrNY7Ywwjt7QjaMAlbb1ixE+v7AFskOeyKdmZT/NvPVEAo48gYUxIcF8ILlMc3eg1bo6SxNoUcbxhTv7edrA==
   /@types/koa/2.0.49:
@@ -91,11 +103,19 @@ packages:
       '@types/keygrip': 1.0.1
       '@types/koa-compose': 3.2.4
       '@types/node': 12.7.4
+    dev: true
     resolution:
       integrity: sha512-WQWpCH8O4Dslk8IcXfazff40aM1jXX7BQRbADIj/fKozVPu76P/wQE4sRe2SCWMn8yNkOcare2MkDrnZqLMkPQ==
   /@types/mime/2.0.1:
+    dev: true
     resolution:
       integrity: sha512-FwI9gX75FgVBJ7ywgnq/P7tw+/o1GUbtP0KzbtusLigAOgIgNISRK0ZPl4qertvXSIE8YbsVJueQ90cDt9YYyw==
+  /@types/node-fetch/2.5.0:
+    dependencies:
+      '@types/node': 12.7.5
+    dev: true
+    resolution:
+      integrity: sha512-TLFRywthBgL68auWj+ziWu+vnmmcHCDFC/sqCOQf1xTz4hRq8cu79z8CtHU9lncExGBsB8fXA4TiLDLt6xvMzw==
   /@types/node/12.7.4:
     resolution:
       integrity: sha512-W0+n1Y+gK/8G2P/piTkBBN38Qc5Q1ZSO6B5H3QmPCUewaiXOo2GCAWZ4ElZCcNhjJuBSUSLGFUJnmlCn5+nxOQ==
@@ -104,12 +124,14 @@ packages:
     resolution:
       integrity: sha512-9fq4jZVhPNW8r+UYKnxF1e2HkDWOWKM5bC2/7c9wPV835I0aOrVbS/Hw/pWPk2uKrNXQqg9Z959Kz+IYDd5p3w==
   /@types/range-parser/1.2.3:
+    dev: true
     resolution:
       integrity: sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
   /@types/serve-static/1.13.3:
     dependencies:
       '@types/express-serve-static-core': 4.16.9
       '@types/mime': 2.0.1
+    dev: true
     resolution:
       integrity: sha512-oprSwp094zOglVrXdlo/4bAHtKTAxX6VT8FOZlBKrmyLbNvE1zxZyJ6yikMVtHIvwP45+ZQGJn+FdXGKTozq0g==
   /abbrev/1.1.1:
@@ -404,6 +426,21 @@ packages:
       node-opus: ^0.2.7
       opusscript: ^0.0.6
       sodium: ^2.0.3
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      erlpack:
+        optional: true
+      libsodium-wrappers:
+        optional: true
+      node-opus:
+        optional: true
+      opusscript:
+        optional: true
+      sodium:
+        optional: true
+      uws:
+        optional: true
     resolution:
       integrity: sha512-tGhV5xaZXE3Z+4uXJb3hYM6gQ1NmnSxp9PClcsSAYFVRzH6AJH74040mO3afPDMWEAlj8XsoPXXTJHTxesqcGw==
   /dotenv/8.1.0:
@@ -1376,6 +1413,10 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-pW0No1RGHgzlpHJO1nsVrHKpOEIxkGg1xB+v0ZmdNH5OAeAwzAVrCnI2/6Mtx+Uys6iaylxa+D3g4j63IKKjSQ==
+  /valid-url/1.0.9:
+    dev: false
+    resolution:
+      integrity: sha1-HBRHm0DxOXp1eC8RXkCGRHQzogA=
   /validator/10.11.0:
     dev: false
     engines:
@@ -1436,28 +1477,32 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==
-  github.com/esfox/discord-utils/c62dc5b29952db7afea03b4b63ed921a51264f1d:
+  github.com/esfox/discord-utils/f7919eda557679f8c46c4e0a24c33d0ab185ed2e:
     dependencies:
       discord.js: 11.5.1
       node-fetch: 2.6.0
     dev: false
     name: discord-utils
     resolution:
-      tarball: 'https://codeload.github.com/esfox/discord-utils/tar.gz/c62dc5b29952db7afea03b4b63ed921a51264f1d'
-    version: 1.0.0
+      registry: 'https://registry.npmjs.org/'
+      tarball: 'https://codeload.github.com/esfox/discord-utils/tar.gz/f7919eda557679f8c46c4e0a24c33d0ab185ed2e'
+    version: 1.0.2
 specifiers:
   '@types/dotenv': ^6.1.1
   '@types/koa': ^2.0.49
   '@types/koa-bodyparser': ^4.3.0
   '@types/koa-router': ^7.0.42
   '@types/node': ^12.7.4
+  '@types/node-fetch': ^2.5.0
   discord-utils: 'github:esfox/discord-utils'
   discord.js: ^11.5.1
   dotenv: ^8.1.0
   koa: ^2.8.1
   koa-bodyparser: ^4.2.1
   koa-router: ^7.4.0
+  node-fetch: ^2.6.0
   sequelize: ^5.18.1
   sqlite3: ^4.1.0
   ts-node: ^8.3.0
   typescript: ^3.6.2
+  valid-url: ^1.0.9
