@@ -31,6 +31,7 @@ async function action(context)
 
   context.message.channel.startTyping();
   const deleted = await mediaService.deleteFromUser(mediaLinkOrID, userID);
+  context.message.channel.stopTyping(true);
   if(!deleted)
     return context.send('❌  You have not saved that media.');
 
