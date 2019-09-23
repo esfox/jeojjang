@@ -49,11 +49,18 @@ module.exports =
     example: '8',
   }),
 
+  mytags: getInfo(
+  {
+    command: 'mytags',
+    alias: 'mt',
+    description: 'shows all the tags you used',
+  }),
+
   showtags: getInfo(
   {
     command: 'showtags',
     alias: 'st',
-    description: 'shows all the tags you used',
+    description: 'shows all the tags of a specific media',
   }),
 
   addtags: getInfo(

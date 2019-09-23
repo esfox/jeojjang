@@ -217,11 +217,21 @@ class MediaService extends Service
       tagService.findOrSave(tags).then(([ tag ]) => [ tag ]));
 
     if(mediaTagUpdate === MediaTagUpdate.Add)
+    {
       await userMedia.addTags(tagObjects);
+      userMedia.tags.push(...tagObjects);
+    }
     else if (mediaTagUpdate === MediaTagUpdate.Edit)
+    {
       await userMedia.setTags(tagObjects);
+      userMedia.tags = tagObjects;
+    }
     else if(mediaTagUpdate === MediaTagUpdate.Delete)
+    {
       await userMedia.removeTags(tagObjects);
+      const removed = tagObjects.map(({ id }) => id);
+      userMedia.tags = userMedia.tags.filter(({ id }) => !removed.includes(id));
+    }
 
     // deletes tags that aren't used by any media
     if(mediaTagUpdate === MediaTagUpdate.Edit ||
