@@ -1,3 +1,4 @@
+const { parseTags } = require('../../utils/functions');
 const { mediaService } = require('../../api-link');
 
 const PagedMessage = require('../../utils/paged-message');
@@ -11,7 +12,7 @@ module.exports = async (context, ofUser) =>
   let tags = context.raw_parameters;
   if(!tags)
     return context.send('❌  Please include tags to search.');
-  tags = tags.split(',').filter(tag => tag);
+  tags = parseTags(tags);
 
   context.message.channel.startTyping();
   const media = await mediaService.findWithTags(tags,
