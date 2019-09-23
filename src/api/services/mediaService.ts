@@ -26,11 +26,17 @@ class MediaService extends Service
     });
   }
 
-  // finds one media by link or ID from a user by Discord or database ID
+  /* finds one by media link or usermedia ID from
+    a user by Discord or database ID */
   findByLinkOrIDFromUser(linkOrID: string | number, userID: number | string)
   {
+    /* If linkOrID is a number, then it is referring to the UserMedia's ID.
+      If not, it is referring to the media link. */
+    const isByID = !isNaN(Number(linkOrID));
+
     return UserMedia.findOne(
     {
+      where: isByID? { id: linkOrID } : {},
       include:
       [
         {
@@ -41,7 +47,7 @@ class MediaService extends Service
         {
           model: Media,
           as: 'media',
-          where: whereLinkOrID(linkOrID)
+          where: !isByID? { link: linkOrID } : {}
         },
         { model: Tag, as: 'tags' }
       ]
@@ -170,6 +176,9 @@ class MediaService extends Service
   deleteFromUser = async (linkOrID: number | string, userID: string | number) =>
   {
     const userMedia = await this.findByLinkOrIDFromUser(linkOrID, userID);
+    if(!userMedia)
+      return;
+
     const result = await userMedia.destroy();
 
     // deletes media that aren't used by any user
@@ -188,8 +197,9 @@ class MediaService extends Service
     return useCount === 0? Media.destroy({ where: { id } }) : null;
   }
 
-  /* finds user media by link or ID and the user's Discord or database ID
-    then adds, edits or deletes the tags of the user media */
+  /* finds user media by link or user media ID and the 
+    user's Discord or database ID then adds, 
+    edits or deletes the tags of the user media */
   private async modifyUserMediaTags(
     linkOrID: string | number,
     userID: string | number,
