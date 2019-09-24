@@ -10,5 +10,6 @@ module.exports =
   bot_id: '539438748241231872',
   prefixes: [ '-' ],
   embed_color: '#FF5FA2',
-  error_message: '❌  Woops! A problem occurred.'
+  error_message: '❌  Woops! A problem occurred.',
+  gfycatRegex: /gfycat\.com\/(.+?)(?=$|[^a-z])/i,
 }

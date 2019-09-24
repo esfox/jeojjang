@@ -1,5 +1,5 @@
 import { mediaService } from '../../api-link';
-import { parseTags } from '../../utils/functions';
+import { parseTags, getThumbnail } from '../../utils/functions';
 import { Context } from 'discord-utils';
 import { UserMedia } from '../../../api/database/models';
 
@@ -43,8 +43,8 @@ async function update(context: Context, operation: Operation)
       '🗑  Deleted' : '✏  Edited'
     } Tags`,
     `Media Link: ${link}\n\n`
-    + `New Tags: ${mediaTags.map(({ name }) => `**${name}**`).join(', ')}`)
-    .setThumbnail(link);
+      + `New Tags: ${mediaTags.map(({ name }) => `**${name}**`).join(', ')}`)
+    .setThumbnail(getThumbnail(link));
   
   context.chat(embed); 
 }
