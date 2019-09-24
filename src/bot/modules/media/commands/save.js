@@ -2,6 +2,7 @@ const { Command } = require('discord-utils');
 const fetch = require('node-fetch');
 const { isWebUri } = require('valid-url');
 
+const { gfycatRegex } = require('../../../config');
 const { sleep, parseTags } = require('../../../utils/functions');
 const { mediaService } = require('../../../api-link');
 const
@@ -24,8 +25,8 @@ module.exports = class extends Command
   }
 }
 
+const gfycatAPI = 'https://api.gfycat.com/v1/gfycats/';
 const mediaTypes = [ 'image', 'video', 'gifv' ];
-const allowedLinksRegex = /gfycat.com|youtube.com|youtu.be/g;
 
 /** @param {import('discord-utils').Context} context*/
 async function action(context)
@@ -64,7 +65,18 @@ async function action(context)
       return context.send('❌  The link is not a valid media type.');
   }
 
-  if(!link.match(allowedLinksRegex))
+  if(link.includes('gfycat.com'))
+  {
+    const [ , gfycatID ] = link.match(gfycatRegex);
+    if(!gfycatID)
+      return;
+
+    const { gfyItem } = await fetch(gfycatAPI + gfycatID)
+      .then(response => response.json());
+    link = gfyItem.mp4Url;
+  }
+
+  if(!link.match(/gfycat\.com|youtube\.com|youtu\.be/g))
   {
     const { headers } = await fetch(link, { method: 'head' });
     if(!mediaTypes.includes(headers.get('content-type').split('/').shift()))
