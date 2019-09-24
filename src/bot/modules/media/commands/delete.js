@@ -1,4 +1,5 @@
 const { Command } = require('discord-utils');
+const { getThumbnail } = require('../../../utils/functions');
 const { mediaService } = require('../../../api-link');
 const
 {
@@ -35,8 +36,9 @@ async function action(context)
   if(!deleted)
     return context.send('❌  You have not saved that media.');
 
-  const embed = context.embed('🗑  Deleted your saved media', deleted.link)
-    .setThumbnail(deleted.link)
+  const { link } = deleted.media;
+  const embed = context.embed('🗑  Deleted your saved media', link)
+    .setThumbnail(getThumbnail(link))
     .setFooter(`ID: ${deleted.id}`);
 
   context.chat(embed);
