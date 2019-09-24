@@ -11,7 +11,7 @@ const getInfo = ({ command, alias, description, usage, example }) =>
 > \`-${alias} ${example}\`` : ''}`
 });
 
-module.exports =
+const info =
 {
   save: getInfo(
   {
@@ -61,6 +61,8 @@ module.exports =
     command: 'showtags',
     alias: 'st',
     description: 'shows all the tags of a specific media',
+    usage: '(media ID/link)',
+    example: 'https://gfycat.com/offensivecomplexcub',
   }),
 
   addtags: getInfo(
@@ -102,3 +104,5 @@ module.exports =
     description: 'shows this message',
   }),
 }
+
+module.exports = info;

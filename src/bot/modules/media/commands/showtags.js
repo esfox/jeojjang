@@ -1,4 +1,5 @@
 const { Command } = require('discord-utils');
+const { getThumbnail } = require('../../../utils/functions');
 const { mediaService } = require('../../../api-link');
 const 
 {
@@ -40,9 +41,9 @@ async function action(context)
   const { link } = userMedia.media;
   const tags = userMedia.tags.map(({ name }) => name);
 
-  const embed = context.embed('🏷 Showing tags of...',
+  const embed = context.embed('🏷 Tags of...',
     `ID: ${id}\nLink: ${link}`)
     .addField('Tags', tags.join(', '))
-    .setThumbnail(link);;
+    .setThumbnail(getThumbnail(link));
   context.chat(embed);
 }
