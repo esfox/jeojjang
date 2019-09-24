@@ -179,7 +179,7 @@ class MediaService extends Service
     if(!userMedia)
       return;
 
-    const result = await userMedia.destroy();
+    await userMedia.destroy();
 
     // deletes media that aren't used by any user
     await this.deleteUnused(userMedia.media_id);
@@ -187,7 +187,7 @@ class MediaService extends Service
     // deletes tags that aren't used by any media
     await tagService.deleteUnused(userMedia.tags);
 
-    return result;
+    return userMedia;
   }
 
   // deletes media not used saved by any user using the media's ID only
