@@ -1,5 +1,5 @@
 const { Command } = require('discord-utils');
-const display = require('../display');
+const { display } = require('../display');
 const
 {
   command,
