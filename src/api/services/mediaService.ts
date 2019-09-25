@@ -64,7 +64,7 @@ class MediaService extends Service
   {
     return UserMedia.findAll(
     {
-      limit: limit,
+      limit,
       offset: limit * (page - 1),
       include:
       [
