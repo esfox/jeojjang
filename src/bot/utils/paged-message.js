@@ -1,7 +1,12 @@
 module.exports = class
 {
-	/** @param {import('discord-utils').Context} context */
-	async send(context, title, pages/* , onPageChange */)
+	/**
+	 * @param {import('discord-utils').Context} context
+	 * @param {string} title
+	 * @param {pages} Array
+	 * @param {Function} [onPageChange]
+	 * */
+	async send(context, title, pages, onPageChange)
 	{
 		if(!Array.isArray(pages))
 			throw new Error('The page contents should be an array of data.');
@@ -11,9 +16,8 @@ module.exports = class
 		this.page = 0;
 		this.pages = pages;
 		this.content = pages[this.page];
-		// this.content = firstPage;
-		// this.callback = onPageChange;
-
+		this.callback = onPageChange;
+		
 		if(pages.length > 1)
 		{
 			this.message = await context.chat(this.text());
@@ -53,7 +57,9 @@ module.exports = class
 
 	async change()
 	{
-		// this.content = await this.callback(this.page);
+		if(this.callback)
+			this.content = await this.callback(this.page);
+
 		await this.resend();
 		await this.react();
 		this.wait();
