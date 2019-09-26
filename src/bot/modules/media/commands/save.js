@@ -57,6 +57,9 @@ async function action(context)
   if(!isWebUri(link))
     return context.send('❌  The link is not a valid URL.');
 
+  if(!tags || tags.length === 0)
+    return context.send('❌  Please include tags.');
+
   const [ embed ] = embeds;
   if(embed)
   {
