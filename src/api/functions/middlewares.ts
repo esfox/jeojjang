@@ -13,7 +13,10 @@ async function get
 {
   const queryParameter = context.query[property];
   if(!queryParameter)
-    return context.body = await getAllFunction();
+  {
+    const { limit, page } = context.query;
+    return context.body = await getAllFunction(limit, page);
+  }
 
   const data = await getOneFunction(queryParameter);
   if(!data)
