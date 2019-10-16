@@ -18,7 +18,7 @@ server.use(helmet());
 
 // Ping route for Glitch awaking
 const router = new Router();
-router.get('/', context => context.status = 200);
+router.get('/ping', context => context.status = 200);
 
 // Serve Website
 server.use(serve('./src/website'));
