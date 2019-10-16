@@ -6,11 +6,9 @@
     "allowJs": true,
     "outDir": "dist",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "rootDir": "src"
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "sandbox", "others/**/*"
   ]

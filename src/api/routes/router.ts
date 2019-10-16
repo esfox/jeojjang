@@ -1,7 +1,7 @@
+import { MediaService } from '../../bot/api-link';
+import { TagService } from '../../bot/api-link';
+import { UserService } from '../../bot/api-link';
 import Router from 'koa-router';
-import { MediaService } from '../services/mediaService';
-import { TagService } from '../services/tagService';
-import { UserService } from '../services/userService';
 
 const mediaLimit = 25;
 
@@ -9,7 +9,7 @@ const parseTags = (tags: string) =>
   tags? tags.split(',').map(tag => tag.trim().toLowerCase())
     .filter(tag => tag) : null;
 
-function getMedia(
+async function getMedia(
   query: { tags?: string, limit?: number, page?: number },
   discordID?: string
 )
