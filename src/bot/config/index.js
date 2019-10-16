@@ -12,4 +12,5 @@ module.exports =
   embed_color: '#FF5FA2',
   error_message: '❌  Woops! A problem occurred.',
   gfycatRegex: /gfycat\.com\/(.+?)(?=$|[^a-z])/i,
+  website: 'https://jeojjang.glitch.me/',
 }

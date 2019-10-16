@@ -1,0 +1,31 @@
+const { Command } = require('discord-utils');
+const { website } = require('../../../config');
+const
+{
+  command,
+  alias,
+  description
+} = require('../../../config/commands-info').save;
+
+module.exports = class extends Command
+{
+  constructor()
+  {
+    super();
+
+    this.keyword = command;
+    this.aliases.push(alias);
+    this.description = description;
+    this.action = action;
+  }
+}
+
+/** @param {import('discord-utils').Context} context*/
+async function action(context)
+{
+  const parameters = context.parameters;
+  if(parameters === 'public' || parameters === 'p')
+    return context.chat(website);
+
+  context.chat(website + context.message.author.id);
+}

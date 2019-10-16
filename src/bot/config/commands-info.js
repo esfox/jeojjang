@@ -22,6 +22,13 @@ const info =
     example: 'https://gfycat.com/brieffarawayamphibian nayeon, cute, smile',
   }),
 
+  web: getInfo(
+  {
+    command: 'web',
+    alias: 'w',
+    description: 'get a link to the website to see media. Typing `public` or `p` would give a link to the public gallery.',
+  }),
+
   find: getInfo(
   {
     command: 'find',
