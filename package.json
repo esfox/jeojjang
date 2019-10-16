@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "start": "ts-node src",
+    "start": "tsc && node dist",
     "dev": "ts-node src"
   },
   "keywords": [],
