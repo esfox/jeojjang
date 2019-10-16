@@ -5,7 +5,7 @@ const
   command,
   alias,
   description
-} = require('../../../config/commands-info').save;
+} = require('../../../config/commands-info').web;
 
 module.exports = class extends Command
 {
