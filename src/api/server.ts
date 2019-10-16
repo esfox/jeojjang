@@ -10,6 +10,8 @@ import http from 'http';
 import { apiRouter } from './routes/router';
 import { syncDatabase } from './database/database';
 
+let bot;
+
 const port = process.env.PORT || 7777;
 const server = new Koa();
 server.use(bodyparser());
@@ -43,11 +45,12 @@ server
   .use(apiRouter.routes())
   .use(apiRouter.allowedMethods());
 
-async function startServer()
+async function startServer(discordBot)
 {
+  bot = discordBot;
   await syncDatabase();
   server.listen(port);
   console.log(`Server started on port ${port}.`);
 }
 
-export { startServer };
+export { startServer, bot };
