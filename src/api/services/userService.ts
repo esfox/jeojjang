@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import { bot } from '../discord-link'
+import { bot } from '../server'
 import { User } from '../database/models';
 
 const whereIDorDiscordID = (id: number | string) =>

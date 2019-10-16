@@ -12,7 +12,7 @@ context.setConfig(config);
 bot.on('ready', () =>
 {
   console.log('Bot is online.');
-  startServer();
+  startServer(bot);
 });
 
 bot.on('message', message =>
