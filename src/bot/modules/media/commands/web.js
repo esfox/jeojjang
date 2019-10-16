@@ -23,9 +23,13 @@ module.exports = class extends Command
 /** @param {import('discord-utils').Context} context*/
 async function action(context)
 {
-  const [ parameter ] = context.parameters;
-  if(parameter === 'public' || parameter === 'p')
-    return context.chat(website);
+  const parameters = context.parameters;
+  if(parameters)
+  {
+    const [ parameter ] = parameters;
+    if(parameter === 'public' || parameter === 'p')
+      return context.chat(website);
+  }
 
   context.chat(website + context.message.author.id);
 }
