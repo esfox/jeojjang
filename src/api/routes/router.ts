@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import { MediaService } from '../services/MediaService';
+import { MediaService } from '../services/mediaService';
 import { TagService } from '../services/tagService';
 import { UserService } from '../services/userService';
 
