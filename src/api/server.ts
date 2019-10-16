@@ -5,7 +5,6 @@ import cors from '@koa/cors';
 import helmet from 'koa-helmet';
 import serve from 'koa-static';
 import send from 'koa-send';
-import mount from 'koa-mount';
 import http from 'http';
 
 import { apiRouter } from './routes/router';
@@ -22,11 +21,11 @@ const router = new Router();
 router.get('/', context => context.status = 200);
 
 // Serve Website
-server.use(mount('/dashboard', serve('./src/website')));
+server.use(serve('./src/website'));
 router.get('/dashboard',
-  context => send(context, './src/website/index.html'));
+  context => send(context, './src/website/page.html'));
 router.get('/dashboard/:discordID',
-  context => send(context, './src/website/index.html'));
+  context => send(context, './src/website/page.html'));
 
 // Glitch awaken loop
 if(process.env.PROJECT_DOMAIN)
