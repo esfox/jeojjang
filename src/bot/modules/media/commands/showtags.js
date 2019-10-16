@@ -1,6 +1,6 @@
 const { Command } = require('discord-utils');
 const { getThumbnail } = require('../../../utils/functions');
-const { MediaService } = require('../../../api-link');
+const { MediaService }= require('../../../api-link');
 const 
 {
   command,

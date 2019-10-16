@@ -4,7 +4,7 @@ const { isWebUri } = require('valid-url');
 
 const { gfycatRegex } = require('../../../config');
 const { sleep, parseTags } = require('../../../utils/functions');
-const { MediaService } = require('../../../api-link');
+const { MediaService }= require('../../../api-link');
 const
 {
   command,

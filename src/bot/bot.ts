@@ -1,3 +1,4 @@
+import { startServer } from '../api/server';
 import * as Discord from 'discord.js';
 import { Context } from 'discord-utils';
 
@@ -11,6 +12,7 @@ context.setConfig(config);
 bot.on('ready', () =>
 {
   console.log('Bot is online.');
+  startServer();
 });
 
 bot.on('message', message =>
