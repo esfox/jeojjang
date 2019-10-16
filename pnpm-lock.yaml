@@ -6,6 +6,7 @@ dependencies:
   koa: 2.10.0
   koa-bodyparser: 4.2.1
   koa-helmet: 5.2.0
+  koa-mount: 4.0.0
   koa-router: 7.4.0
   koa-send: 5.0.0
   koa-static: 5.0.0
@@ -893,6 +894,15 @@ packages:
     dev: false
     resolution:
       integrity: sha1-JzwH7c3Ljfaiwat9We52SRRR7BQ=
+  /koa-mount/4.0.0:
+    dependencies:
+      debug: 4.1.1
+      koa-compose: 4.1.0
+    dev: false
+    engines:
+      node: '>= 7.6.0'
+    resolution:
+      integrity: sha512-rm71jaA/P+6HeCpoRhmCv8KVBIi0tfGuO/dMKicbQnQW/YJntJ6MnnspkodoA4QstMVEZArsCphmd0bJEtoMjQ==
   /koa-router/7.4.0:
     dependencies:
       debug: 3.2.6
@@ -1704,6 +1714,7 @@ specifiers:
   koa: ^2.8.1
   koa-bodyparser: ^4.2.1
   koa-helmet: ^5.2.0
+  koa-mount: ^4.0.0
   koa-router: ^7.4.0
   koa-send: ^5.0.0
   koa-static: ^5.0.0
