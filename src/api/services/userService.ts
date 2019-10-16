@@ -30,8 +30,8 @@ class UserService
     if(!discordUser)
       return;
 
-    const { tag, avatarURL } = discordUser;
-    return { tag, avatarURL };
+    const { tag, displayAvatarURL } = discordUser;
+    return { tag, displayAvatarURL };
   }
  
   // saves a user, but finds it first to avoid duplicates
