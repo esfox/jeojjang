@@ -1,39 +1,154 @@
 import { Op } from 'sequelize';
-import { Service } from './service';
 import { Media, User, UserMedia, Tag } from '../database/models';
-import { userService, whereIDorDiscordID } from '../services/userService';
-import { tagService } from '../services/tagService';
-
-const whereLinkOrID = (linkOrID: number | string) =>
-  ({ [Op.or]: [ { id: linkOrID }, { link: linkOrID } ] });
+import { UserService, whereIDorDiscordID } from './userService';
+import { TagService, parseTags } from './tagService';
 
 enum MediaTagUpdate { Add, Edit, Delete };
 
-class MediaService extends Service
+interface Normalized
 {
-  // finds one media by link only
-  findByLink(link: string)
+  id: number;
+  media_id: number;
+  link: string;
+  tags: string[];
+  createdAt: Date;
+}
+
+// necessary attributes to query
+const queryAttributes =
+[
+  UserMedia.columns.id,
+  UserMedia.columns.tags,
+  UserMedia.columns.createdAt, 
+];
+
+function paginationOptions(limit: number = 25, page: number = 1)
+{
+  const options =
   {
-    return Media.findOne({ where: { link } });
+    limit,
+    offset: limit * (page - 1),
+  }
+  return options;
+}
+
+const includeMedia =
+({
+  model: Media, as: 'media',
+  attributes:
+  [
+    Media.columns.id,
+    Media.columns.link,
+    Media.columns.createdAt
+  ],
+});
+
+const includeUser = (discord_id: string) =>
+({
+  model: User, as: 'user', where: { discord_id },
+});
+
+const tagFindOption = (id: number | string) =>
+  ({ tags: { [Op.substring]: `|${id}|` } });
+
+const tagsFindOptions = async (tags: string[], getIDs: boolean = true) => 
+{
+  if(getIDs)
+  {
+    const tagIDs = await TagService.getIDs(tags);
+    if(tagIDs.length == 0)
+      return;
+
+    return tagIDs.map(tagFindOption);
+  }
+  return tags.map(tagFindOption);
+}
+
+const stringifyTagIDs = (tags: any[]) =>
+  `|${tags.reduce((string, item) => string + (item.id || item) + '|', '')}`;
+
+// function to normalize query result (merge same media) 
+const normalize = async (userMedia: UserMedia[]): Promise<Normalized[]> =>
+{
+  const allTagIDs = userMedia.reduce((allTags, { tags }) =>
+    allTags.concat(parseTags(tags)), [])
+      .filter((id, i, array) => array.indexOf(id) === i);
+
+  const tagMap = await TagService.getTagMap(allTagIDs);
+  const mediaTagsMap = userMedia.reduce((map, { media, tags }) =>
+  {
+    const parsedTags = parseTags(tags);
+    if(map[media.id])
+    {
+      for(const parsedTag of parsedTags)
+      {
+        if(map[media.id].includes(parsedTag))
+          continue;
+        
+        map[media.id].push(parsedTag);
+      }
+    }
+    else map[media.id] = parsedTags;
+    return map;
+  }, {});
+
+  for(const id of Object.keys(mediaTagsMap))
+    mediaTagsMap[id] = mediaTagsMap[id].map((tagID: number) => tagMap[tagID]);
+
+  const normalized: Normalized[] = [];
+  for(const { id, media } of userMedia)
+  {
+    const mediaID = media.id;
+    const link = media.link;
+    if(normalized.some(({ media_id }) => media_id === mediaID))
+      continue;
+
+    normalized.push(
+    {
+      id,
+      media_id: mediaID,
+      link,
+      tags: mediaTagsMap[mediaID],
+      createdAt: media.createdAt,
+    });
   }
 
-  // finds one media by link or ID
-  findByLinkOrID(linkOrID: string | number)
+  return normalized;
+}
+
+const deleteUnusedTags = async (tags: number[]) =>
+{
+  const unusedTags = (await Promise.all(tags.map(async tag => 
+    ({ tag, count: await UserMedia.count({ where: tagFindOption(tag) }) }))))
+    .filter(({ count }) => count === 0);
+  if(unusedTags.length > 0)
+    await TagService.deleteMultiple(unusedTags.map(({ tag }) => tag));
+}
+
+class MediaService
+{
+  static countAll(): Promise<number>
   {
-    return Media.findOne(
+    return Media.count();
+  }
+
+  static async getAllWithTags(limit?: number, page?: number): Promise<Normalized[]>
+  {
+    return UserMedia.findAll(
     {
-      where: whereLinkOrID(linkOrID)
-    });
+      ...paginationOptions(limit, page),
+      attributes: queryAttributes,
+      include: [ includeMedia ],
+    }).then(normalize);
   }
 
   /* finds one by media link or usermedia ID from
     a user by Discord or database ID */
-  findByLinkOrIDFromUser(linkOrID: string | number, userID: number | string)
+  static findOne(linkOrID: string | number, discordID: string): Promise<UserMedia>
   {
     /* If linkOrID is a number, then it is referring to the UserMedia's ID.
       If not, it is referring to the media link. */
     const isByID = !isNaN(Number(linkOrID));
-
     return UserMedia.findOne(
     {
       where: isByID? { id: linkOrID } : {},
@@ -42,238 +157,213 @@ class MediaService extends Service
         {
           model: User,
           as: 'user',
-          where: whereIDorDiscordID(userID)
+          where: whereIDorDiscordID(discordID)
         },
         {
           model: Media,
           as: 'media',
           where: !isByID? { link: linkOrID } : {}
         },
-        { model: Tag, as: 'tags' }
       ]
     });
   }
 
-  // handles both getAllFromUser and findWithTags
-  private findWithArgs(
-    userID?: number | string,
-    tags?: string[],
-    limit: number = 10,
-    page: number = 1
-  )
+  static async getTags(linkOrID: string | number, discordID: string): Promise<UserMedia>
+  {
+    const userMedia: any = await this.findOne(linkOrID, discordID);
+    const tags = await TagService.getTagMap(parseTags(userMedia.tags));
+    userMedia.tags = Object.values(tags);
+    return userMedia;
+  }
+
+  static async countByTags(tags: string[]): Promise<number>
+  {
+    const tagsOptions = await tagsFindOptions(tags);
+    if(!tagsOptions)
+      return;
+
+    return UserMedia.count({ where: { [Op.and]: tagsOptions } });
+  }
+
+  static async findByTags(
+    tags: string[],
+    limit?: number,
+    page?: number
+  ): Promise<Normalized[]>
+  {
+    const tagsOptions = await tagsFindOptions(tags);
+    if(!tagsOptions)
+      return;
+
+    return UserMedia.findAll(
+    {
+      ...paginationOptions(limit, page),
+      attributes: queryAttributes,
+      include: [ includeMedia ],
+      where: { [Op.and]: tagsOptions },
+    }).then(normalize);
+  }
+
+  static countFromUser(discordID: string): Promise<number>
+  {
+    return UserMedia.count({ include: [ includeUser(discordID) ] });
+  }
+
+  static async findFromUser(
+    discordID: string,
+    limit?: number,
+    page?: number
+  ): Promise<Normalized[]>
   {
     return UserMedia.findAll(
     {
-      limit,
-      offset: limit * (page - 1),
-      include:
-      [
-        {
-          model: User,
-          as: 'user',
-
-          /* if the `userID` is given, a where clause that checks
-            by Discord or database ID is used */
-          where: userID? whereIDorDiscordID(userID) : {}
-        },
-        { model: Media, as: 'media' },
-        {
-          model: Tag,
-          as: 'tags',
-
-          /* if the tags is given and it only contains 1 element,
-            a where clause is used for it instead of filtering
-            the results after the query */
-          where: tags && tags.length === 1? { name: tags.shift() } : {}
-        }
-      ]
-    })
-      /* if tags given contain more than 1 element,
-        the results are filtered by tag name after the query */
-      .then((userMedia: UserMedia[]) => tags && tags.length > 1? 
-        userMedia.filter(userMedia =>
-          tags.every(tag => userMedia.tags.some(({ name }) => tag === name))) :
-        userMedia);
+      ...paginationOptions(limit, page),
+      attributes: queryAttributes,
+      include: [ includeMedia, includeUser(discordID) ],
+    }).then(normalize);
   }
 
-  /* finds all media by tags from a user if the `userID`
-    (database or Discord ID) is given */
-  findWithTags = (
+  static async countFromUserByTags(discordID: string, tags: string[]): Promise<number>
+  {
+    const tagsOptions = await tagsFindOptions(tags);
+    if(!tagsOptions)
+      return;
+
+    return UserMedia.count(
+    {
+      where: { [Op.and]: tagsOptions },
+      include: [ includeUser(discordID) ],
+    });
+  }
+
+  static async findFromUserByTags(
+    discordID: string,
     tags: string[],
-    userID?: number | string,
     limit?: number,
     page?: number
-  ) =>
+  ): Promise<Normalized[]>
   {
-    return this.findWithArgs(userID, tags, limit, page);
+    const tagsOptions = await tagsFindOptions(tags);
+    if(!tagsOptions)
+      return;
+
+    return UserMedia.findAll(
+    {
+      ...paginationOptions(limit, page),
+      attributes: queryAttributes,
+      include: [ includeMedia, includeUser(discordID) ],
+      where: { [Op.and]: tagsOptions }
+    }).then(normalize);
   }
 
-  // get all media of a user by database or Discord ID
-  findFromUser = (
-    userID: number | string,
-    limit?: number,
-    page?: number
-  ) =>
-  {
-    return this.findWithArgs(userID, null, limit, page);
-  }
-
-  // get all media of a user by Discord ID
-  findFromDiscordUser = (
-    discord_id: string,
-    limit?: number,
-    page?: number
-  ) =>
-  {
-    return this.findFromUser(discord_id, limit, page);
-  }
-
-  // saves media, but finds it first to avoid duplicates
-  save(link: string)
-  {
-    return Media.findOrCreate({ where: { link } });
-  }
-  
   // saves a media for a user by database ID or Discord ID with tag/s
-  saveForUser = async (
-    link: string,
-    userID: number | string,
-    tags: string | string[]
-  ) =>
+  static async save(
+    link: string, 
+    discordID: string, 
+    tags: string[]
+  ): Promise<UserMedia>
   {
     // finds the user to add the media to and creates if it doesn't exist
-    let [ user ] = await userService.findOrSave(userID);
-    const [ media ] = await this.save(link);
+    let [ user ] = await UserService.findOrSave(discordID);
+    const [ media ] = await Media.findOrCreate({ where: { link } });
 
-    // finds the tags for the media and creates if not existing
-    if(Array.isArray(tags))
-      tags = await tagService.findOrSaveMany(tags);
-    else
-      [ tags ] = await tagService.findOrSave(tags);
+    // finds the tags for the media and creates if not existing\
+    const tagsObjects: Tag[] = await TagService.findOrSave(tags);
 
     // saves the media for the user
-    const [ userMedia ] = await UserMedia.findOrCreate(
+    const [ userMedia, created ] = await UserMedia.findOrCreate(
     {
       where:
       {
         user_id: user.id,
         media_id: media.id
-      }
+      },
+      defaults: { tags: stringifyTagIDs(tagsObjects) },
     });
-
-    await userMedia.setTags(Array.isArray(tags)? tags : [ tags ]);
-    return userMedia;
-  }
-
-  // deletes by link or ID
-  delete = (linkOrID: string | number) =>
-  {
-    return Media.destroy({ where: whereLinkOrID(linkOrID) });
+    return !created? null : userMedia;
   }
 
   /* deletes a media from a user using the media's link or ID
     and the user's Discord or database ID */
-  deleteFromUser = async (linkOrID: number | string, userID: string | number) =>
+  static async delete(linkOrID: number | string, discordID: string)
   {
-    const userMedia = await this.findByLinkOrIDFromUser(linkOrID, userID);
+    const userMedia = await MediaService.findOne(linkOrID, discordID);
     if(!userMedia)
       return;
 
+    const tags = parseTags(userMedia.tags);
     await userMedia.destroy();
 
     // deletes media that aren't used by any user
-    await this.deleteUnused(userMedia.media_id);
+    const id = userMedia.media_id;
+    const useCount = await UserMedia.count({ where: { media_id: id } });
+    if(useCount === 0)
+      await Media.destroy({ where: { id } });
 
     // deletes tags that aren't used by any media
-    await tagService.deleteUnused(userMedia.tags);
+    await deleteUnusedTags(tags);
 
+    // TODO: delete users that don't have saved media
     return userMedia;
   }
 
-  // deletes media not used saved by any user using the media's ID only
-  async deleteUnused(id: number)
-  {
-    const useCount = await UserMedia.count({ where: { media_id: id } });
-    return useCount === 0? Media.destroy({ where: { id } }) : null;
-  }
-
-  /* finds user media by link or user media ID and the 
+/* finds user media by link or user media ID and the 
     user's Discord or database ID then adds, 
     edits or deletes the tags of the user media */
-  private async modifyUserMediaTags(
+  private static async changeTags(
     linkOrID: string | number,
-    userID: string | number,
-    tags: string | string[],
+    discordID: string,
+    tags: string[],
     mediaTagUpdate: MediaTagUpdate
-  )
+  ): Promise<Normalized>
   {
-    const userMedia = await this.findByLinkOrIDFromUser(linkOrID, userID);
+    const userMedia: UserMedia = await this.findOne(linkOrID, discordID);
     if(!userMedia)
       return;
 
-    // get tag instances from given tag names
-    const tagObjects: Tag[] = await (Array.isArray(tags)?
-      tagService.findOrSaveMany(tags) :
-      tagService.findOrSave(tags).then(([ tag ]) => [ tag ]));
-
-    if(mediaTagUpdate === MediaTagUpdate.Add)
+    const savedTags = parseTags(userMedia.tags);
+    let newTags: any;
+    if(mediaTagUpdate === MediaTagUpdate.Delete)
     {
-      await userMedia.addTags(tagObjects);
-      userMedia.tags.push(...tagObjects);
+      const tagIDs = await TagService.getIDs(tags);
+      newTags = savedTags.filter(tag => !tagIDs.includes(tag));
     }
-    else if (mediaTagUpdate === MediaTagUpdate.Edit)
+    else
     {
-      await userMedia.setTags(tagObjects);
-      userMedia.tags = tagObjects;
+      const tagObjects = await TagService.findOrSave(tags);
+      newTags = mediaTagUpdate === MediaTagUpdate.Add?
+        tagObjects.filter(({ id }) => !savedTags.includes(id)) : tagObjects;
     }
-    else if(mediaTagUpdate === MediaTagUpdate.Delete)
-    {
-      await userMedia.removeTags(tagObjects);
-      const removed = tagObjects.map(({ id }) => id);
-      userMedia.tags = userMedia.tags.filter(({ id }) => !removed.includes(id));
-    }
+     
+    const removedTags = savedTags.filter(tag => !newTags.includes(tag));
+    newTags = stringifyTagIDs(newTags);
+    userMedia.tags = mediaTagUpdate === MediaTagUpdate.Add?
+      userMedia.tags + newTags.substr(1) : newTags;
 
-    // deletes tags that aren't used by any media
-    if(mediaTagUpdate === MediaTagUpdate.Edit ||
-      mediaTagUpdate === MediaTagUpdate.Delete)
-      await tagService.deleteUnused(tagObjects);
+    const saved = await normalize([ await userMedia.save() ]);
+    if(mediaTagUpdate !== MediaTagUpdate.Add)
+      await deleteUnusedTags(removedTags);
 
-    return userMedia;
+    return saved.shift();
   }
 
   // adds tags to a user media
-  addUserMediaTags = async (
-    linkOrID: string | number,
-    userID: string | number,
-    tags: string | string[]
-  ) =>
+  static addTags(linkOrID: string | number, discordID: string, tags: string[])
   {
-    return this.modifyUserMediaTags(
-      linkOrID, userID, tags, MediaTagUpdate.Add);
+    return MediaService.changeTags(linkOrID, discordID, tags, MediaTagUpdate.Add);
   }
 
   // edits tags of a user media
-  editUserMediaTags = async (
-    linkOrID: string | number,
-    userID: string | number,
-    tags: string | string[]
-  ) =>
+  static editTags(linkOrID: string | number, discordID: string, tags: string[])
   {
-    return this.modifyUserMediaTags(
-      linkOrID, userID, tags, MediaTagUpdate.Edit);
+    return MediaService.changeTags(linkOrID, discordID, tags, MediaTagUpdate.Edit);
   }
 
-  // deletes tags of a user media
-  deleteUserMediaTags = async (
-    linkOrID: string | number,
-    userID: string | number,
-    tags: string | string[]
-  ) =>
+  // deletes tags of a user medsia
+  static deleteTags(linkOrID: string | number, discordID: string, tags: string[])
   {
-    return this.modifyUserMediaTags(
-      linkOrID, userID, tags, MediaTagUpdate.Delete);
+    return MediaService.changeTags(linkOrID, discordID, tags, MediaTagUpdate.Delete);
   }
 }
 
-const mediaService = new MediaService(Media);
-export { mediaService };
+export { MediaService };

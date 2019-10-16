@@ -4,7 +4,7 @@ const { isWebUri } = require('valid-url');
 
 const { gfycatRegex } = require('../../../config');
 const { sleep, parseTags } = require('../../../utils/functions');
-const { mediaService } = require('../../../api-link');
+const { MediaService } = require('../../../api-link');
 const
 {
   command,
@@ -95,8 +95,8 @@ const save = async (context, link, tags) =>
   tags = parseTags(tags);
 
   context.message.channel.startTyping();
-  const saved = await mediaService
-    .saveForUser(link, context.message.author.id, tags);
+  const user = context.message.author.id;
+  const saved = await MediaService.save(link, user, tags);
   if(!saved)
     return context.send('❌  You already saved that media.');
 

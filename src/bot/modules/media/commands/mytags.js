@@ -1,5 +1,5 @@
 const { Command } = require('discord-utils');
-const { tagService } = require('../../../api-link');
+const { TagService } = require('../../../api-link');
 const 
 {
   command,
@@ -24,8 +24,7 @@ module.exports = class extends Command
 async function action(context)
 {
   context.message.channel.startTyping();
-  const tags = await tagService.findUsedByUser(context.message.author.id, 50)
-    .then(tags => tags.map(({ name }) => name));
+  const tags = await TagService.findFromUser(context.message.author.id, 100);
   context.message.channel.stopTyping(true);
   context.send(`🏷 You used ${tags.length} tags`, tags.join(', '));
 }

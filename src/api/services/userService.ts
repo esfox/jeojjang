@@ -1,31 +1,41 @@
 import { Op } from 'sequelize';
-import { Service } from './service';
+import { bot } from '../discord-link'
 import { User } from '../database/models';
 
 const whereIDorDiscordID = (id: number | string) =>
   ({ [Op.or]: [ { id }, { discord_id: id } ] });
 
-class UserService extends Service
+class UserService
 {
   // finds a user by Discord or database ID
-  find = (id: number | string) =>
+  static find(id: number | string)
   {
     return User.findOne({ where: whereIDorDiscordID(id) });
   }
 
   // finds the database ID from a given Discord ID
-  findIDFromDiscordID(discord_id: string)
+  static async findFromDiscordID(discord_id: string): Promise<number>
   {
     return User.findOne(
     {
       where: { discord_id },
-      attributes: [ 'id' ]
-    })
-      .then((user: User) => user? user.id : null);
+      attributes: [ User.columns.id ]
+    }).then(({ id }) => id);
+  }
+
+  // get Discord user's username and avatar from Discord ID
+  static getDiscordUserData(id: string)
+  {
+    const discordUser = bot.users.get(id);
+    if(!discordUser)
+      return;
+
+    const { tag, avatarURL } = discordUser;
+    return { tag, avatarURL };
   }
  
   // saves a user, but finds it first to avoid duplicates
-  save(id: number | string)
+  static save(id: number | string)
   {
     return User.findOrCreate(
     {
@@ -35,17 +45,16 @@ class UserService extends Service
   }
 
   // finds a user by Discord or database ID and creates it if it doesn't exist
-  findOrSave = (id: number | string) =>
+  static findOrSave(id: number | string)
   {
-    return this.save(id);
+    return UserService.save(id);
   }
 
   // deletes a user by Discord or database ID
-  delete = (id: number | string) =>
+  static delete(id: number | string)
   {
     return User.destroy({ where: whereIDorDiscordID(id) });
   }
 }
 
-const userService = new UserService(User);
-export { userService, whereIDorDiscordID };
+export { UserService, whereIDorDiscordID };

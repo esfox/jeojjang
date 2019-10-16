@@ -1,4 +1,4 @@
-import { mediaService } from '../../api-link';
+import { MediaService } from '../../api-link';
 import { parseTags, getThumbnail } from '../../utils/functions';
 import { Context } from 'discord-utils';
 import { UserMedia } from '../../../api/database/models';
@@ -24,26 +24,26 @@ async function update(context: Context, operation: Operation)
   tags = parseTags(tags);
 
   context.message.channel.startTyping();
-  const updatedMedia: UserMedia = await (
+  const updatedMedia = await (
     operation === Operation.add?
-      mediaService.addUserMediaTags(media, userID, tags) :
+      MediaService.addTags(media, userID, tags) :
     operation === Operation.remove?
-      mediaService.deleteUserMediaTags(media, userID, tags) :
-      mediaService.editUserMediaTags(media, userID, tags));
+      MediaService.deleteTags(media, userID, tags) :
+      MediaService.editTags(media, userID, tags));
 
   if(!updatedMedia)
     return context.send('❌  You have not saved that media.');
     
   const { tags: mediaTags } = updatedMedia;
-  const { link } = updatedMedia.media;
+  const { id, link } = updatedMedia;
   const embed = context.embed(`${
     operation === Operation.add?
       '✅  Added' :
     operation === Operation.remove?
       '🗑  Deleted' : '✏  Edited'
     } Tags`,
-    `Media Link: ${link}\n\n`
-      + `New Tags: ${mediaTags.map(({ name }) => `**${name}**`).join(', ')}`)
+    `ID: ${id}\nMedia Link: ${link}\n\n`)
+    .addField('New Tags', mediaTags.join(', '))
     .setThumbnail(getThumbnail(link));
   
   context.chat(embed); 

@@ -1,6 +1,6 @@
 const { Command } = require('discord-utils');
 const { getThumbnail } = require('../../../utils/functions');
-const { mediaService } = require('../../../api-link');
+const { MediaService } = require('../../../api-link');
 const 
 {
   command,
@@ -32,18 +32,18 @@ async function action(context)
   const [ linkOrID ] = context.parameters;
 
   context.message.channel.startTyping();
-  const userMedia = await mediaService.findByLinkOrIDFromUser(linkOrID, user);
+  const userMedia = await MediaService.getTags(linkOrID, user);
   if(!userMedia)
     return context.send('❌  You have not saved that media.');
   context.message.channel.stopTyping(true);
   
   const { id } = userMedia;
   const { link } = userMedia.media;
-  const tags = userMedia.tags.map(({ name }) => name);
+  const tags = userMedia.tags.join(', ');
 
   const embed = context.embed('🏷 Tags of...',
     `ID: ${id}\nLink: ${link}`)
-    .addField('Tags', tags.join(', '))
+    .addField('Tags', tags)
     .setThumbnail(getThumbnail(link));
   context.chat(embed);
 }

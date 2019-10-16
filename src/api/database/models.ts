@@ -1,74 +1,126 @@
-import { Sequelize, Model, DataTypes, ModelAttributes } from 'sequelize';
+import { Sequelize, Model, DataTypes } from 'sequelize';
 
 class User extends Model
 {
   public id: number;
   // TODO: Change to Snowflake type
   public discord_id: string;
+
+  public static columns =
+  {
+    id: 'id',
+    discord_id: 'discord_id',
+  }
 }
-const userAttributes: ModelAttributes =
-{
-  discord_id: DataTypes.STRING
-};
+// const userAttributes =
+// {
+//   discord_id: DataTypes.STRING
+// };
 
 class Media extends Model
 {
   public id: number;
   public link: string;
+  public createdAt: Date;
+
+  public static columns =
+  {
+    id: 'id',
+    link: 'link',
+    createdAt: 'createdAt',
+  }
 }
-const mediaAttributes =
-{
-  link: DataTypes.STRING
-};
+// const mediaAttributes =
+// {
+//   link: DataTypes.STRING
+// };
 
 class Tag extends Model
 {
   public id: number;
   public name: string;
+
+  public static columns =
+  {
+    id: 'id',
+    name: 'name',
+  }
 }
-const tagAttributes =
-{
-  name: DataTypes.STRING
-};
+// const tagAttributes =
+// {
+//   name: DataTypes.STRING
+// };
 
 class UserMedia extends Model
 {
   public id: number;
   public media_id: number;
   public user_id: number;
+  public tags?: string;
+
   public user?: User;
   public media?: Media;
-  public tags?: Tag[];
-}
-const userMediaAttributes = 
-{
-  id:
+  // public tags?: Tag[];
+
+  public static columns =
   {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
+    id: 'id',
+    media_id: 'media_id',
+    user_id: 'user_id',
+    tags: 'tags',
+    createdAt: 'createdAt',
   }
 }
+// const userMediaAttributes = 
+// {
+//   id:
+//   {
+//     type: DataTypes.INTEGER,
+//     primaryKey: true,
+//     autoIncrement: true
+//   },
+//   tags: DataTypes.STRING,
+// };
 
-class MediaTag extends Model {}
+// class MediaTag extends Model {}
 
-const models =
-[
-  { model: User, attributes: userAttributes },
-  { model: Media, attributes: mediaAttributes },
-  { model: Tag, attributes: tagAttributes },
-  { model: UserMedia, attributes: userMediaAttributes },
-  { model: MediaTag, },
-];
+// const models =
+// [
+//   { model: User, attributes: userAttributes },
+//   { model: Media, attributes: mediaAttributes },
+//   { model: Tag, attributes: tagAttributes },
+//   { model: UserMedia, attributes: userMediaAttributes },
+//   // { model: MediaTag, },
+// ];
 
 function initializeModels(sequelize: Sequelize)
 {
-  for(const { model, attributes } of models)
-    model.init(attributes || {},
+  const initOptions =
+  {
+    sequelize,
+    underscored: true,
+  };
+
+  User.init({ discord_id: DataTypes.STRING }, initOptions);
+  Media.init({ link: DataTypes.STRING }, initOptions);
+  Tag.init({ name: DataTypes.STRING }, initOptions);
+  UserMedia.init(
+  {
+    id:
     {
-      sequelize,
-      underscored: true,
-    });
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    tags: DataTypes.STRING,
+  }, initOptions);
+  
+  // for(const { model, attributes } of models)
+  //   model.init(attributes || {},
+  //   {
+  //     sequelize,
+  //     underscored: true,
+  //   });
 
   associateModels();
 }
@@ -83,18 +135,17 @@ function associateModels()
   UserMedia.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
   UserMedia.belongsTo(Media, { foreignKey: 'media_id', as: 'media' });
 
-  Tag.belongsToMany(UserMedia,
-    { through: MediaTag, foreignKey: 'tag_id', as: 'userMedia' });
-  UserMedia.belongsToMany(Tag, 
-    { through: MediaTag, foreignKey: 'user_media_id', as: 'tags' });
+  // Tag.belongsToMany(UserMedia,
+  //   { through: MediaTag, foreignKey: 'tag_id', as: 'userMedia' });
+  // UserMedia.belongsToMany(Tag, 
+  //   { through: MediaTag, foreignKey: 'user_media_id', as: 'tags' });
 }
 
-export
-{
+export {
   initializeModels,
   User, 
   Media,
   Tag, 
   UserMedia,
-  MediaTag
+  // MediaTag
 };

@@ -1,6 +1,6 @@
 const { Command } = require('discord-utils');
 const { getThumbnail } = require('../../../utils/functions');
-const { mediaService } = require('../../../api-link');
+const { MediaService } = require('../../../api-link');
 const
 {
   command,
@@ -31,7 +31,7 @@ async function action(context)
   const userID = context.message.author.id;
 
   context.message.channel.startTyping();
-  const deleted = await mediaService.deleteFromUser(mediaLinkOrID, userID);
+  const deleted = await MediaService.delete(mediaLinkOrID, userID);
   context.message.channel.stopTyping(true);
   if(!deleted)
     return context.send('❌  You have not saved that media.');

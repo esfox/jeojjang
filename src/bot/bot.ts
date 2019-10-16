@@ -23,4 +23,4 @@ function startBot()
   bot.login(process.env.DISCORD_BOT_TOKEN);
 }
 
-export { startBot };
+export { startBot, bot };

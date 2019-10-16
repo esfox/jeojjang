@@ -63,6 +63,6 @@
     "src/**/*"
   ],
   "exclude": [
-    "sandbox"
+    "sandbox", "others/**/*"
   ]
 } 
