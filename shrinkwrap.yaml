@@ -1718,6 +1718,7 @@ packages:
     dev: false
     name: discord-utils
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/esfox/discord-utils/tar.gz/81e3257cda484e632f2f815819ed247f59132021'
     version: 1.0.2
 registry: 'https://registry.npmjs.org/'
