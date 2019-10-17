@@ -87,8 +87,8 @@ async function action(context)
       .then(json => json.gfyItem.mp4Url)
       .catch(console.error);
     if(!mp4URL)
-      return context.send('❌  Unable to save gfycat.'
-        + ' Try again.\nIf it still doesn\' work, try saving the'
+      return context.send('❌  Unable to save gfycat.',
+      ' Try again.\nIf it still doesn\' work, try saving the'
         + '**`.mp4`** URL of the gfycat instead.'
         + '\nE.g. `https://giant.gfycat.com/gfycatid.mp4`');
 
