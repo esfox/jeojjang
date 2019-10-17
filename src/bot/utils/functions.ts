@@ -29,6 +29,8 @@ function getThumbnail(link: string)
 
     return `https://i.ytimg.com/vi/${youTubeID}/hqdefault.jpg`;
   }
+
+  return link;
 }
 
 export { sleep, parseTags, getThumbnail, gfycatRegex };
