@@ -1,4 +1,5 @@
 const { Command } = require('discord-utils');
+const { website } = require('../../../config');
 const commandsInfo = require('../../../config/commands-info');
 const
 {
@@ -28,7 +29,9 @@ async function action(context)
   const description = Object.values(commandsInfo)
     .reduce((text, { description }) =>
       description? text + description + '\n\n' : text, '');
-  embed.setDescription('Shortcuts in parentheses `()`.\n\n‍' + description);
+  embed
+    .setDescription('Shortcuts in parentheses `()`.\n\n‍' + description)
+    .addField('Public Gallery', website);
 
   context.chat(embed);
 }
