@@ -80,9 +80,17 @@ async function action(context)
     if(!gfycatID)
       return;
 
-    const { gfyItem } = await fetch(gfycatAPI + gfycatID)
-      .then(response => response.json());
-    link = gfyItem.mp4Url;
+    const mp4URL = await fetch(gfycatAPI + gfycatID)
+      .then(response => response.json())
+      .then(json => json.gfyItem.mp4Url)
+      .catch(error =>
+      {
+        console.error(error);
+        context.send('❌  Unable to save gfycat. Try saving the **`.mp4`**'
+          + ' URL of the gfycat instead.');
+        return;
+      });
+    link = mp4URL;
   }
 
   if(!link.match(/gfycat\.com|youtube\.com|youtu\.be/g))
