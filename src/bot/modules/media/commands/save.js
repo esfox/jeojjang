@@ -2,7 +2,7 @@ const { Command } = require('discord-utils');
 const fetch = require('node-fetch');
 const { isWebUri } = require('valid-url');
 
-const { gfycatRegex } = require('../../../config');
+const { gfycatRegex, tagMaxLength } = require('../../../config');
 const { sleep, parseTags } = require('../../../utils/functions');
 const { MediaService }= require('../../../api-link');
 const
@@ -54,6 +54,14 @@ async function action(context)
   }
 
   let [ link, ...tags ] = parameters;
+  tags = parseTags(tags);
+
+  const tooLongTag = tags.find(tag => tag.length > tagMaxLength);
+  if(tooLongTag)
+    return context.send(`❌  Tag name tag name`, `**${tooLongTag}**`
+      + ' is too long.\nTags can only have a max of '
+      + `__${tagMaxLength} characters__.`);
+
   if(!isWebUri(link))
     return context.send('❌  The link is not a valid URL.');
 
@@ -93,11 +101,15 @@ async function action(context)
 /** @param {import('discord-utils').Context} context*/
 const save = async (context, link, tags) =>
 {
-  tags = parseTags(tags);
-
   context.message.channel.startTyping();
   const user = context.message.author.id;
-  const saved = await MediaService.save(link, user, tags);
+  const saved = await MediaService.save(link, user, tags)
+    .catch(error =>
+    {
+      console.error(error);
+      return context.send('❌ Woops. A problem occured. Try again.');
+    });
+    
   if(!saved)
     return context.send('❌  You already saved that media.');
 
