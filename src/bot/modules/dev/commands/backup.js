@@ -1,5 +1,5 @@
 const { Command } = require('discord-utils');
-const databasePath = `./src/api/database/database.sqlite`;
+const fs = require('fs');
 
 module.exports = class extends Command
 {
@@ -12,10 +12,25 @@ module.exports = class extends Command
   }
 }
 
+const backupPath = './backup';
+const databasePath = './src/api/database/database.sqlite';
+
 /** @param {import('discord-utils').Context} context*/
 async function action(context)
 {
-  context.chat('Media Database', false,
+  if(!fs.existsSync(backupPath))
+    fs.mkdirSync(backupPath);
+
+  try
+  {
+    fs.copyFileSync(databasePath, './backup');
+  }
+  catch(error)
+  {
+    console.log(error);
+  }
+
+  context.chat('✅  Database backed up.', false,
   {
     files:
     [{
