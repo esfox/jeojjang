@@ -6,11 +6,12 @@ import helmet from 'koa-helmet';
 import serve from 'koa-static';
 import send from 'koa-send';
 import http from 'http';
+import { Client } from 'discord.js';
 
 import { apiRouter } from './routes/router';
 import { syncDatabase } from './database/database';
 
-let bot;
+let bot: Client;
 
 const port = process.env.PORT || 7777;
 const server = new Koa();
