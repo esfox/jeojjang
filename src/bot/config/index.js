@@ -14,4 +14,5 @@ module.exports =
   error_message: '❌  Woops! A problem occurred.',
   gfycatRegex: /gfycat\.com\/(.+?)(?=$|[^a-z])/i,
   tagMaxLength: 35,
+  tagMaxCount: 10,
 }

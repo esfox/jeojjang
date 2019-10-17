@@ -2,7 +2,7 @@ const { Command } = require('discord-utils');
 const fetch = require('node-fetch');
 const { isWebUri } = require('valid-url');
 
-const { gfycatRegex, tagMaxLength } = require('../../../config');
+const { gfycatRegex, tagMaxLength, tagMaxCount } = require('../../../config');
 const { sleep, parseTags } = require('../../../utils/functions');
 const { MediaService }= require('../../../api-link');
 const
@@ -65,6 +65,9 @@ async function action(context)
 
   if(!tags || tags.length === 0)
     return context.send('❌  Please include tags.');
+
+  if(tags.length > tagMaxCount)
+    return context.send(`❌  Cannot save more than ${tagMaxCount} tags.`);
 
   const [ embed ] = embeds;
   if(embed)
