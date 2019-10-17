@@ -23,7 +23,9 @@ async function display(context: Context, ofUser?: boolean)
           if(!pages[index])
             pages[index] = '';
         
-          pages[index] += `\`#${id}\`: ${link}\n`;
+          pages[index] += `\`#${id}\`:`
+            + ` ${link.includes('gfycat')?
+              link.replace('giant.', '').replace('.mp4', '') : link}\n`;
           return pages;
         }, []));
 
