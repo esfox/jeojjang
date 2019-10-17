@@ -4,7 +4,8 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "tsc && node dist",
-    "dev": "ts-node src"
+    "dev": "ts-node src",
+    "pull": "git pull && refresh"
   },
   "keywords": [],
   "author": "osairis100@gmail.com",
