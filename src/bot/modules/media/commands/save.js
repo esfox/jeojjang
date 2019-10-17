@@ -54,8 +54,6 @@ async function action(context)
   }
 
   let [ link, ...tags ] = parameters;
-  tags = parseTags(tags);
-
   const tooLongTag = tags.find(tag => tag.length > tagMaxLength);
   if(tooLongTag)
     return context.send(`❌  Tag name tag name`, `**${tooLongTag}**`
@@ -101,6 +99,8 @@ async function action(context)
 /** @param {import('discord-utils').Context} context*/
 const save = async (context, link, tags) =>
 {
+  tags = parseTags(tags);
+  
   context.message.channel.startTyping();
   const user = context.message.author.id;
   const saved = await MediaService.save(link, user, tags)
