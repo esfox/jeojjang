@@ -3,7 +3,7 @@ import { initializeModels } from './models';
 
 const sequelize = new Sequelize(
 {
-  storage: `${__dirname}/database.sqlite`,
+  storage: `./database.sqlite`,
   dialect: 'sqlite'
 });
 
