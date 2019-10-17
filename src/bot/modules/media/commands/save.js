@@ -85,14 +85,12 @@ async function action(context)
     const mp4URL = await fetch(gfycatAPI + gfycatID)
       .then(response => response.json())
       .then(json => json.gfyItem.mp4Url)
-      .catch(error =>
-      {
-        console.error(error);
-        context.send('❌  Unable to save gfycat. Try saving the **`.mp4`**'
-          + ' URL of the gfycat instead.'
-          + 'E.g. `https://giant.gfycat.com');
-        return;
-      });
+      .catch(console.error);
+    if(!mp4URL)
+      return context.send('❌  Unable to save gfycat. Try saving the **`.mp4`**'
+        + ' URL of the gfycat instead.'
+        + 'E.g. `https://giant.gfycat.com');
+
     link = mp4URL;
   }
 
