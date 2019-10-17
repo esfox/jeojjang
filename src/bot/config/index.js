@@ -9,8 +9,9 @@ module.exports =
   },
   bot_id: '539438748241231872',
   prefixes: [ '-' ],
-  embed_color: '#FF5FA2',
+  embed_color: '#7289DA',
   error_message: '❌  Woops! A problem occurred.',
   gfycatRegex: /gfycat\.com\/(.+?)(?=$|[^a-z])/i,
+  tagMaxLength: 35,
   website: 'https://jeojjang.glitch.me/',
 }
