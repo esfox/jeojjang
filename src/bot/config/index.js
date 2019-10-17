@@ -10,8 +10,8 @@ module.exports =
   bot_id: '539438748241231872',
   prefixes: [ '-' ],
   embed_color: '#7289DA',
+  website: 'https://jeojjang.glitch.me/',
   error_message: '❌  Woops! A problem occurred.',
   gfycatRegex: /gfycat\.com\/(.+?)(?=$|[^a-z])/i,
   tagMaxLength: 35,
-  website: 'https://jeojjang.glitch.me/',
 }
