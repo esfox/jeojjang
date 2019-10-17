@@ -13,7 +13,7 @@ module.exports = class extends Command
 }
 
 const backupPath = './backup';
-const databasePath = './src/api/database/database.sqlite';
+const databasePath = './database.sqlite';
 
 /** @param {import('discord-utils').Context} context*/
 async function action(context)

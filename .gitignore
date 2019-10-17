@@ -22,7 +22,7 @@ dist
 logs
 
 # sqlite databases
-# *.sqlite
+*.sqlite
 
 # Unnecessary others folder
 others
