@@ -74,7 +74,9 @@ async function action(context)
       return context.send('❌  The link is not a valid media type.');
   }
 
-  if(link.includes('gfycat.com'))
+  if(link.includes('gfycat.com') &&
+    (!link.includes('giant') &&
+    (!link.includes('.mp4') || !link.includes('.webm'))))
   {
     const [ , gfycatID ] = link.match(gfycatRegex);
     if(!gfycatID)
@@ -87,7 +89,8 @@ async function action(context)
       {
         console.error(error);
         context.send('❌  Unable to save gfycat. Try saving the **`.mp4`**'
-          + ' URL of the gfycat instead.');
+          + ' URL of the gfycat instead.'
+          + 'E.g. `https://giant.gfycat.com');
         return;
       });
     link = mp4URL;
