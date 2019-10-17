@@ -168,12 +168,20 @@ class MediaService
     });
   }
 
-  static async getTags(linkOrID: string | number, discordID: string): Promise<UserMedia>
+  static async getTags(linkOrID: string | number, discordID: string): Promise<{}>
   {
-    const userMedia: any = await this.findOne(linkOrID, discordID);
+    const userMedia: UserMedia = await this.findOne(linkOrID, discordID);
+    if(!userMedia)
+      return;
+    
     const tags = await TagService.getTagMap(parseTags(userMedia.tags));
-    userMedia.tags = Object.values(tags);
-    return userMedia;
+    const data =
+    {
+      id: userMedia.id,
+      link: userMedia.media.link,
+      tags: Object.values(tags),
+    };
+    return data;
   }
 
   static async countByTags(tags: string[]): Promise<number>

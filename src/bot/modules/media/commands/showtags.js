@@ -38,7 +38,7 @@ async function action(context)
   context.message.channel.stopTyping(true);
   
   const { id } = userMedia;
-  const { link } = userMedia.media;
+  const { link } = userMedia;
   const tags = userMedia.tags.join(', ');
 
   const embed = context.embed('🏷 Tags of...',
