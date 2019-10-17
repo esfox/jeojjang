@@ -82,7 +82,8 @@ async function action(context)
   if(!link.match(/gfycat\.com|youtube\.com|youtu\.be/g))
   {
     const { headers } = await fetch(link, { method: 'head' });
-    if(!mediaTypes.includes(headers.get('content-type').split('/').shift()))
+    const contentType = headers.get('content-type');
+    if(!contentType || !mediaTypes.includes(contentType.split('/').shift()))
       return context.send('❌  The link is not a valid media type.');
   }
 
