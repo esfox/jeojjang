@@ -36,8 +36,10 @@ async function display(context: Context, ofUser?: boolean)
       + ` media with ${tags.length === 1? 'that tag' : 'all those tags'}.`);
 
   // TODO: Fix `media.length`, it's not showing actual count of user media
-  const title = `🔎  ${ofUser? 'You have' : 'Found'} ${media.length}`
-    + ` media with tags: ${tags.map(tag => `**${tag.trim()}**`).join(', ')}`;
+  // const title = `🔎  ${ofUser? 'You have' : 'Found'} ${media.length}`
+  //   + ` media with tags: ${tags.map(tag => `**${tag.trim()}**`).join(', ')}`;
+  const title = `🔎  ${ofUser? 'Your ' : ''} media with tags:`
+    + tags.map(tag => `**${tag.trim()}**`).join(', ');
     
   new PagedMessage().send(context, title, media);
 
