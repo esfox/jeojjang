@@ -6,19 +6,16 @@ module.exports = class
 	 * @param {pages} Array
 	 * @param {Function} [onPageChange]
 	 * */
-	async send(context, title, pages, onPageChange)
+	async send(context, title, initial, pages, onPageChange)
 	{
-		if(!Array.isArray(pages))
-			throw new Error('The page contents should be an array of data.');
-
 		this.author = context.message.author.id;
 		this.title = title;
 		this.page = 0;
 		this.pages = pages;
-		this.content = pages[this.page];
+		this.content = initial;
 		this.callback = onPageChange;
 		
-		if(pages.length > 1)
+		if(pages > 1)
 		{
 			this.message = await context.chat(this.text());
 			await this.react();
@@ -68,7 +65,6 @@ module.exports = class
 	async resend()
 	{
 		this.message = await this.message.delete();
-		this.content = this.pages[this.page];
 		this.message = await this.message.channel.send(this.text());
 	}
 
@@ -77,7 +73,7 @@ module.exports = class
 		if(this.page !== 0)
 			await this.message.react('⬅');
 
-		if(this.page < this.pages.length - 1)
+		if(this.page < this.pages - 1)
 			await this.message.react('➡');
 	}
 
