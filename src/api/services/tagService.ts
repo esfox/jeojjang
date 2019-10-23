@@ -12,6 +12,18 @@ class TagService
     return Tag.findAll();
   }
 
+  static async getAllFromUser(discord_id: string): Promise<Tag[]>
+  {
+    const tagIDs = await UserMedia.findAll(
+    {
+      attributes: [ UserMedia.columns.tags ],
+      include: [{ model: User, as: 'user', where: { discord_id }, }]
+    }).then((tagIDs: UserMedia[]) => tagIDs
+      .reduce((tags, { tags: ids }) => tags.concat(parseTags(ids))
+      .filter((id, i, array) => array.indexOf(id) === i), []));
+    return Tag.findAll({ where: { id: { [Op.in]: tagIDs } } });
+  }
+
   // get the string of the IDs of tags given
   static async getIDs(tags: string[]): Promise<number[]>
   {

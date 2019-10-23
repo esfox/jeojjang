@@ -63,8 +63,11 @@ apiRouter.get('/media/:discordID', async context =>
 apiRouter.get('/tags', async context => 
   context.body = await TagService.getAll());
 
+apiRouter.get('/tags/:discordID', async context =>
+  context.body = await TagService.getAllFromUser(context.params.discordID));
+
 apiRouter.get('/user/:discordID', async context =>
-  context.body = await UserService.getDiscordUserData(context.params.discordID));
+  context.body = UserService.getDiscordUserData(context.params.discordID));
 
 // POST routes
 apiRouter.post('/media', async context =>
