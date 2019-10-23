@@ -26,9 +26,9 @@ router.get('/ping', context => context.status = 200);
 // Serve Website
 server.use(serve('./src/website'));
 router.get('/',
-  context => send(context, './src/website/web.html'));
+  context => send(context, './src/website/index.html'));
 router.get('/:discordID',
-  context => send(context, './src/website/web.html'));
+  context => send(context, './src/website/index.html'));
 
 // Glitch awaken loop
 if(process.env.PROJECT_DOMAIN)
