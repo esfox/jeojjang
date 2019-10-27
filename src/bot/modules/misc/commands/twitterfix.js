@@ -29,5 +29,8 @@ async function action(context)
       link}>`)
     .join('\n');
       
+  if(links.length > 2000)
+    return context.send('❌ Woops too many links!');
+
   context.chat(links);
 }
