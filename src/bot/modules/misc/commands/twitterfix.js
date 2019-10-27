@@ -24,8 +24,9 @@ async function action(context)
 
   links = links.replace(/\n|\<|\>/g, ' ').split(' ')
     .filter(link => link !== '')
-    .map(link => `<${/jpg:\w*/g.test(link)?
-      link.substr(0, link.indexOf('jpg:') + 3) : link}>`)
+    .map(link => `<${/.jpg:\w*/g.test(link)?
+      link.substr(0, link.indexOf('.jpg:')) + '?format=jpg&name=orig' :
+      link}>`)
     .join('\n');
       
   context.chat(links);
