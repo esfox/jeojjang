@@ -272,7 +272,7 @@ class MediaService
   ): Promise<UserMedia>
   {
     // finds the user to add the media to and creates if it doesn't exist
-    let [ user ] = await UserService.findOrSave(discordID);
+    const [ user ] = await UserService.findOrSave(discordID);
     const [ media ] = await Media.findOrCreate({ where: { link } });
 
     // finds the tags for the media and creates if not existing\
@@ -289,6 +289,57 @@ class MediaService
       defaults: { tags: stringifyTagIDs(tagsObjects) },
     });
     return !created? null : userMedia;
+  }
+
+  static async saveMany(
+    links: string[],
+    discordID: string,
+    tags: string[]
+  ): Promise<{ saved: UserMedia[], notSaved: string[] }>
+  {
+    const [ user ] = await UserService.findOrSave(discordID);
+
+    const existingMedia: Media[] = await Media
+      .findAll({ where: { link: { [Op.in]: links } } });
+    const mediaToSave = links.filter(link =>
+      !existingMedia.some(({ link: savedLink }) => link === savedLink));
+
+    const savedMedia = await Media.bulkCreate(mediaToSave
+      .map(link => ({ link })));
+    const media = existingMedia.concat(savedMedia);
+    const tagsObjects: Tag[] = await TagService.findOrSave(tags);
+
+    const existingUserMedia: UserMedia[] = await UserMedia.findAll(
+    {
+      where:
+      {
+        user_id: user.id,
+        media_id: { [Op.in]: media.map(({ id }) => id) }
+      },
+      include:
+      [
+        { model: Media, as: 'media', attributes: [ Media.columns.link ] }
+      ]
+    });
+
+    const userMediaToSave = media
+      .filter(({ link }) => 
+        !existingUserMedia.some(({ media }) => media.link === link))
+      .map(({ id }) =>
+      ({
+        media_id: id,
+        user_id: user.id,
+        tags: stringifyTagIDs(tagsObjects)
+      }));
+    
+    const savedUserMedia = await UserMedia.bulkCreate(userMediaToSave);
+    const data =
+    {
+      saved: savedUserMedia.length !== 0? savedUserMedia : null,
+      notSaved: existingUserMedia.map(({ media: { link } }) => link)
+    }
+    
+    return data;
   }
 
   /* deletes a media from a user using the media's link or ID
