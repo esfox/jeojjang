@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "start": "tsc && node dist",
+    "start": "node dist",
     "dev": "ts-node src",
     "pull": "git pull && refresh"
   },
